@@ -1,0 +1,4 @@
+activate facenet
+cd D:\Work\EunsuProject\facenet\contributed
+D:
+python export_embeddings.py ..\model_checkpoints\20180402-114759 ..\..\flask\static\images\
