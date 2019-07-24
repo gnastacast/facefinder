@@ -1,0 +1,122 @@
+button {
+  padding: 0;
+  border: none;
+  font: inherit;
+  color: white;
+  background-color: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 16pt;
+  width: 100px;
+  height:60px;
+  position: relative;
+  transition:all .25s ease-out;
+}
+
+button > div{
+  border: none;
+  background-color: #1e1e1e;
+  padding:15%;
+  border-radius: 100px;
+  box-sizing: border-box;
+  width:100%;
+  height:100%;
+  padding: 5px;
+  transition:all .25s ease-out;
+}
+
+button > div > p {
+  transform: translate(50%, -50%);
+  position: absolute;
+  left: 0;
+}
+
+button > img{
+  filter: invert(100%);
+  pointer-events: none;
+  width: 30%;
+  height: auto;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+button > svg{
+  filter: invert(100%);
+  pointer-events: none;
+  width: 30%;
+  height: auto;
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+button:focus {
+  border: 0;
+  outline: 0;
+}
+
+button:disabled {
+  pointer-events: none;
+}
+
+button:disabled > div {
+  border: 3px solid #1e1e1e;
+  background:transparent;
+  padding: 2px;
+  color:black;
+}
+
+button:disabled > img {
+  filter:invert(0%);
+}
+
+button:active > div{
+  width: 95%;
+  height:95%;
+  padding:2.5%;
+  margin:2.5%;
+}
+
+button:disabled > svg {
+  filter:invert(0%);
+}
+
+button.pink {
+  background-color:transparent;
+}
+
+button.purple {
+  background-color:transparent;
+}
+
+button.blue {
+  background-color:transparent;
+}
+
+button.pink:enabled > div {
+  color:white;
+  background-color: var(--aura-pink);
+}
+
+button.purple:enabled > div {
+  color:white;
+  background-color: var(--aura-purple);
+}
+
+button.blue:enabled > div {
+  color:white;
+  background-color: var(--aura-blue);
+}
+
+button.pink:disabled {
+  filter: invert(20%) sepia(94%) saturate(1849%) hue-rotate(282deg) brightness(88%) contrast(91%); 
+}
+
+button.purple:disabled {
+  filter: invert(21%) sepia(29%) saturate(4270%) hue-rotate(254deg) brightness(92%) contrast(93%);
+}
+
+button.blue:disabled {
+  filter: invert(27%) sepia(36%) saturate(4033%) hue-rotate(187deg) brightness(101%) contrast(87%); 
+}

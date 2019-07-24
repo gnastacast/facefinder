@@ -1,4 +1,6 @@
 activate facenet
-cd D:\Work\EunsuProject\facenet\contributed
+cd D:\Work\EunsuProject\facefinder\facenet\contributed
 D:
-python export_embeddings.py ..\model_checkpoints\20180402-114759 ..\..\flask\static\images\
+python export_embeddings.py ..\model_checkpoints\20180402-114759 ..\aligned_output
+cd D:\Work\EunsuProject\facefinder\flask
+python facenet_search.py static\images\

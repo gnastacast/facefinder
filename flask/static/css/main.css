@@ -1,0 +1,68 @@
+:root {
+	--aura-pink:   #93298e;
+	--aura-purple: #642e92;
+	--aura-blue:   #1072ba;
+	--aura-grey:   #1e1e1e;
+	--aura-green:  #d2d75a;
+	--aura-yellow: #fec65f;
+	--aura-red:    #e46560;
+
+}
+
+.center {
+	margin: 0;
+	position: relative;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	text-align:center;
+}
+
+html {
+	height: 100%;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	height: 100%;
+	overflow:hidden;
+	background: #ffffff;
+	font-family: 'ArialRoundedMT', sans-serif;
+	color:var(--aura-grey);
+}
+
+.green {
+	color:white;
+	background-color: var(--aura-green);
+}
+
+.yellow {
+	color:white;
+	background-color: var(--aura-yellow);
+}
+
+.red {
+	color:white;
+	background-color: var(--aura-red);
+}
+
+.grey {
+	color:white;
+	background-color: var(--aura-grey);
+}
+
+.pink {
+	color:white;
+	background-color: var(--aura-pink);
+}
+
+.purple {
+	color:white;
+	background-color: var(--aura-red);
+}
+
+.blue {
+	color:white;
+	background-color: var(--aura-green);
+}
