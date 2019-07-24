@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='fonts/fonts.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/buttons.css') }}">
+  <style type="text/css">
+  /* Front page */
+    #landing_container{
+      background-color: var(--aura-grey);
+      color:white;
+      padding:0;
+      width:100vw;
+      height:100vh;
+      transition: margin-top 1s ease-in-out;
+      position: relative;
+      margin-top:0vh;
+    }
+
+    #logo{
+      display:block;
+      position:fixed;
+      top:0;
+      background-color:var(--aura-grey);
+      width:100vw;
+      height:100vh;
+      opacity:1;
+      transition: opacity 0.5s ease-out;
+      z-index: 99;
+    }
+
+    #logo > svg{
+      background-color:var(--aura-grey);
+    }
+
+    #name_container{
+      font-size: 60pt;
+      opacity:100;
+      transition: opacity 0.5s ease-out;
+      transition-delay: .5s;
+    }
+
+    #name_container p{
+      margin:0;
+    }
+
+    #begin {
+      width:340px;
+    }
+
+  /* Globe search */
+    #globe_container{
+      background-color: white;
+      color:var(--aura-grey);
+      padding:0;
+      width:100vw;
+      height:100vh;
+    }
+
+    #globe_container ul{
+      list-style: none;
+      margin-left:10vw;
+      font-size:1.2vw;
+      width:70%;
+
+    }
+
+    #globe_container li{
+      height: 0;
+      line-height: 2em;
+      margin: 0;
+      opacity:0;
+      padding: 0 0.5em;
+      overflow: hidden;
+      transition: all .25s ease-in;
+    }
+
+    #globe_container li.shown {
+      height: 2em;
+      margin: 10px 0;
+      opacity:1;
+    }
+
+    #globe_container li.shown:last-child{
+      height:5em;
+    }
+
+    #globe{
+      display: inline-block;
+      width:700px;
+      height: 100vh;
+    }
+  
+  /* Search results */
+
+  /* Temporary UI */
+    #main_buttons{
+      position:fixed;
+      top:0;
+      right:0;
+      z-index: 100;
+      display:none;
+    }
+    #main_buttons ul{
+      list-style: none;
+    }
+
+    #main_buttons li{
+      padding:10px;
+      background: var(--aura-green);
+      border-radius: 100px;
+      margin:10px;
+    }
+  
+  /* Face Search */
+    #explanation_overlay{
+      position: absolute;
+      height: 100vh;
+      width: 100vw;
+      top: 0;
+      left: 1vw;
+      color: white;
+      background-color: var(--aura-grey);
+      font-size: 26pt;
+      line-height: 36pt;
+      z-index: 1;
+      transition:opacity 1s;
+    }
+
+    #explanation_overlay > p{
+      padding: 10%;
+      text-align: left;
+    }
+
+    #face_search_container{
+      position:relative;
+      background-color: white;
+      color:var(--aura-grey);
+      padding:0;
+      width:100vw;
+      height:100vh;
+      font-size: 20pt;
+      display: inline-grid;
+      grid-template-columns: 48vw 23vw 23vw;
+      grid-template-rows: 50vh 50vh;
+      width: 60vw;
+      height: 100vh;
+      grid-gap: 2vw;
+      justify-items: center;
+      align-items: center;
+      margin-left: -1vw;
+    }
+
+    #face_search_container img{
+      display:inline-block;
+      width:100%;
+      border-radius: 50px;
+    }
+
+    #user-video{
+      overflow: hidden;
+      width: 0px;
+      margin-left: 0;
+      /*display: none;*/
+      transition: all .25s ease-out;
+      border-radius:20px;
+    }
+
+    .webcam-img {
+      border-radius: 50px;
+    }
+
+    [class*='credit-score-dot']  {
+      content: "";
+      height: 50px;
+      width: 50px;
+      border-radius: 1000px;
+      display: inline-block;
+      margin-right: 20px;
+      transform: translate(0px,15px);
+      animation-name: example;
+      animation-duration: 4s;
+    }
+
+    .credit-score-dot-img{
+        transform: translate(00px, -80px);
+        margin: -0px 0px -30px 30px;
+        position: absolute;
+    }
+
+  /* Credit score */
+    .credit_score {
+      --size:30;
+      --thickness:6;
+      --marker-size:4;
+      --score:0;
+      --text: "Excellent";
+      --marker-bg: var(--aura-blue);
+      margin:auto;
+      counter-increment: score var(--score);
+      grid-area:main;
+      position:relative;
+      padding-bottom:calc(var(--size) / 30 * 1vw);
+    }
+
+    .credit_score_mask {
+      width:calc(var(--size) * 1vw);
+      height:calc(var(--size) * 0.5vw);
+      background-color: white;
+    }
+
+    .credit_score:before {
+      content: var(--text);
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      font-size: 30pt;
+      z-index: 1;
+      top: 85%;
+      font-weight: bold;
+    }
+
+    .credit_score:after {
+      content: "300 850";
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      font-size: 16pt;
+      opacity:0.5;
+      z-index: 1;
+      top: 100%;
+      text-align-last: justify;
+    }
+
+    .credit_score_marker {
+      height: 200%;
+      width: 100%;
+      position: relative;
+      top: -200%;
+      left: 0;
+      transform: rotate(-90deg) rotate(calc((var(--score) - 300) / 550 * 180deg));
+      transition:transform 0.5s ease-out;
+    }
+
+    .credit_score_marker:after {
+      display: block;
+      content:'';
+      position:absolute;
+      left: calc((50 - var(--marker-size) / 4) * 1%);
+      top: calc((var(--thickness) / 4 - var(--marker-size) / 4) * 1%);
+      width: calc(var(--marker-size) / 2 * 1%);
+      height: calc(var(--marker-size) / 2 * 1%);
+      background: white;
+      border-radius: 50%;
+    }
+
+    .credit_score_marker:before {
+      display: block;
+      content:'';
+      position:absolute;
+      left: calc((50 - var(--marker-size) / 4 - var(--thickness) / 2) * 1%);
+      top: calc((var(--thickness) / 4 - var(--marker-size) / 4 - var(--thickness) / 2) * 1%);
+      width: calc(var(--marker-size) / 2 * 1%);
+      height: calc(var(--marker-size) / 2 * 1%);
+      background: var(--marker-bg);
+      padding: calc(var(--thickness) / 2 * 1%);
+      border-radius: 50%;
+    }
+
+    .credit_score_bg {
+      border-radius: 50%;
+      width:100%;
+      height:200%;
+      position:relative;
+      overflow:hidden;
+      grid-area: "main";
+    }
+
+    .credit_score_bg:after {
+      content: '';
+      width: calc((100 - var(--thickness)) * 1%);
+      height:calc((100 - var(--thickness)) * 1%);
+      background-color: white;
+      position:absolute;
+      left:calc((var(--thickness)) * 0.5%);
+      top: calc((var(--thickness)) * 0.5%);
+      border-radius:50%;
+    }
+
+    .credit_score_segment {
+      height:100%; width:100%;
+      position:absolute;
+      left:0; right:0;
+      transform: translate(0,-50%) rotate(calc(var(--offset,0) * 1deg));
+      transform-origin:50% 100%;
+      overflow:hidden;
+    }
+
+    .credit_score_segment:before {
+      background:var(--bg, #000);
+      content: '';
+      height:100%; width: 100%;
+      position:absolute;
+      transform:translate(0,100%) rotate(calc(var(--value, 45) * 1deg));
+      transform-origin:50% 0;
+    }
+
+    #credit_score_grid {
+      height: 90vh; width: 75vw;
+      margin: auto 12.5vw 10vh auto;
+      position:relative;
+      display:grid;
+      grid-template-columns: 32.3% 32.3% 32.3%;
+      grid-template-rows: 5vw auto 5vw 100pt auto;
+      grid-template-areas:
+        "title title title"
+        "main  main  main"
+        "subtitle subtitle subtitle"
+        "factor1 factor2 factor3"
+        "text text text"
+        ". button .";
+      grid-gap:1vw;
+      /*font-size:24pt;*/
+    }
+
+    .credit_score_title , .credit_score_subtitle{
+      margin:3vw auto;
+      width:100%;
+      grid-area:title;
+      text-align:center;
+      opacity:0.5;
+      font-size:20pt;
+    }
+
+    .credit_score_subtitle {
+      grid-area:subtitle;
+      /*text-align:left;*/
+    }
+
+    .factor {
+      overflow: none;
+      border-radius: 1vw;
+      position:relative;
+      background: #fafafa; 
+      border: 1px solid #ddd;
+      --bg:var(--aura-green);
+    }
+
+    .factor:before{
+      background:var(--bg);
+      content: "";
+      position: relative;
+      display: inline-block;
+      height: 100%;
+      width: 2.5%;
+      left: 0%;
+      border-radius: 1vw 0 0 1vw;
+    }
+
+    .factor div{
+      display: inline-block;
+      position: absolute;
+      top: 0;
+      left: 7.5%;
+    }
+
+    .factor p{
+      opacity:0.5;
+      /*font-size:16pt;*/
+    }
+
+    .credit_score_label:before {
+      position: absolute;
+      top: 0;
+      margin-top: 7vw;
+      height: 100%;
+      width: 100%;
+      text-align: center;
+      content: counter(score);
+      font-size: 80pt;
+      font-weight: bold;
+    }
+    
+    .credit_score_content {
+      grid-area:text;
+      font-size:20pt;
+      text-align:center;
+    }
+
+    .factor.overlay {
+        background: #fafafa;
+        width: 90vw;
+        height: 90vh;
+        position: absolute;
+        top: 5vh;
+        left: 5vw;
+        z-index: 1;
+        overflow:hidden;
+        transition:opacity 0.5s;
+        opacity:0;
+        display:none;
+    }
+
+    .factor.overlay div {
+      margin: 5%;   
+      font-size: 2em;
+      list-style: none;
+    }
+
+    .factor.overlay ul {
+      list-style: none;
+      width: 90%;
+      height: 500px;
+      overflow-y: scroll;
+      overflow-x: hidden;
+    }
+
+    .factor.overlay li {
+      background: white;
+      border-radius: 100px;
+      border: 1px solid #ddd;
+      padding: 0px 0px 20px 2%;
+      width: 97%;
+    }
+
+    .factor.overlay ul:after{
+      background-image: linear-gradient(#fafafa00, #fafafaaa, #fafafaff, #fafafaff);
+      content:"";
+      height:20vh;
+      position:absolute;
+      bottom:0;
+      width:100%;
+    }
+
+    .factor button.exit {
+      position: absolute;
+      top: 2%;
+      right: 2%;
+      opacity: 0.2;
+    }
+
+    .factor button.exit p{
+      color:white;
+    }
+
+    .factor button.exit div{
+      background-color: var(--aura-grey);
+    }
+
+  </style>
+ 
+</head>
+<body>
+  <div id='main_buttons'>
+    <ul>
+      <a onclick="goto_0()"><li><span>Waiting for user</span></li></a>
+      <a onclick="goto_1()"><li><span>Landing page</span></li></a>
+      <a onclick="goto_2()"><li><span>Searching database</span></li></a>
+      <a onclick="goto_3()"><li><span>Search results</span></li></a>
+      <a onclick="goto_4()"><li><span>Face search</span></li></a>
+    </ul>
+  </div>
+  <div id='landing_container' style="">
+    <table class="center">
+    <tr>
+      <td id='name_container'>
+        <p>Hello Nico</p>
+        <button id="begin" onclick="begin()" type="button" class='pink'>
+            <div >
+              <p class="center">Allow Aura to use my likeness</p>
+            </div>
+        </button>
+      </td>
+      <td>
+        <div id='user-video' style="margin-left: 0px; width: 0px; transition: all .25s ease-out;">
+          <img  class="webcam-img" src="{{ url_for('static', filename='images/user.jpg') }}"/>
+        </div>
+      </td>
+    </tr>
+    </table>
+    <div id='logo'>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 768 768" height="40%" width="40%" class="center" style='display:inline-block;'>
+        <style>.a{stop-color:#1072ba;}.b{stop-color:#642e92;stop-opacity:1;}.c{stop-color:#93298e;}</style>
+        <defs>
+          <clipPath id="clippath_anim">
+            <path d="m113.4 38.4c23.8 22.2 25 57.1 2.8 80.8-22.2 23.8-59.5 25-83.2 2.8C9.2 99.8 7.9 64.9 30.1 41.1 52.3 17.4 89.6 16.2 113.4 38.4ZM12.3 35.3C7 46.2 6 57.2 4.9 69.1 4.2 77.4 3.1 85.2 1.5 93.4 0.1 100.9-1 108.9 1.5 116.3c3.7 11.1 13.4 21.7 25.3 23.7 7.8 1.4 15.2 4 22.6 6.5 6.4 2.1 12.2 6.2 18.6 8.4 7.2 2.4 13.3 1.7 20.3-1.1 14.8-6 27.8-16.6 36.7-30 6-9.1 10.1-20.4 12.7-30.9 2-8 2.9-17 0.5-25-0.5-1.7-1.1-3.3-1.8-4.9C127 39.5 111.6 15.1 87.2 4.3 68.4-4 46.8 0.3 30.8 12.6 23 18.6 16.7 26.4 12.3 35.3">
+              <animate  dur="1s" repeatCount="indefinite" attributeName="d" id="path_anim"
+                values=""/>
+            </path>
+          </clipPath>
+          <linearGradient gradientTransform="matrix(136.373,-49.4422,49.4422,136.373,-2.88337,104.3)" y2="0" x2="1.17487" y1="0" x1="-0.103708" gradientUnits="userSpaceOnUse" id="linear0">
+            <stop id="stop-0" class="a" offset="-2" />
+            <stop id="stop-1" class="b" offset="-1.61" />
+            <stop id="stop-2" class="c" offset="-0.98" />
+            <stop id="stop-3" class="b" offset="-0.39" />
+            <stop id="stop-4" class="a" offset="0" />
+            <stop id="stop-5" class="b" offset="0.61" />
+            <stop id="stop-6" class="c" offset="0.98" />
+          </linearGradient>
+        </defs>
+        <g transform="translate(-10.815422 614.04147)matrix(4.567124 0 0 4.567124 75.986409 -587.17343)">
+          <path d="m56.1 64.9c-4.2 4.3-6.3 9.4-6.3 15.4 0 6.1 2.1 11.2 6.3 15.5 4.3 4.2 9.4 6.3 15.5 6.3 6.1 0 11.2-2.1 15.4-6.3 4.3-4.3 6.4-9.4 6.4-15.5 0-6-2.1-11.2-6.4-15.4-4.3-4.3-9.4-6.4-15.4-6.4-6.1 0-11.2 2.1-15.5 6.4zm42.3-11.4c7.4 7.4 11.1 16.4 11.1 26.8v30c0 2.2-0.8 4.1-2.4 5.6-1.6 1.6-3.4 2.4-5.6 2.4h-0.2c-2.2 0-4-0.8-5.6-2.4-1.6-1.5-2.4-3.4-2.4-5.6-5 5.3-12.3 8-21.8 8-10.5 0-19.4-3.7-26.8-11.1-7.4-7.4-11.1-16.4-11.1-26.8 0-10.5 3.7-19.4 11.1-26.8 7.4-7.4 16.4-11.1 26.8-11.1 10.5 0 19.4 3.7 26.8 11.1" fill="white"/>
+          <g clip-path="url(#clippath_anim)">
+            <path d="M-50.1 18.2 16.3 201.4 190.7 138.2 124.3-45Zm0 0" fill="url(#linear0)"/>
+          </g>
+          <path stroke="white" fill="transparent" id="svg_8">
+            <animate  dur="10s" repeatCount="indefinite" attributeName="d" values="" id="path_anim"/>
+
+          </path>
+        </g>
+      </svg>
+      <button onclick="goto_1()" style="width: 300px; position: absolute; margin-top: 15%;" class='blue center'>
+          <div>
+            <p class="center">Touch wristband to start</p>
+          </div>
+      </button>
+    </div>
+  </div>
+  <table id='globe_container'>
+    <tr>
+      <td>
+        <ul id="search-list">
+          <li>
+            Searching public information leaks such as Cambridge Analytica (2016)
+          </li>
+          <li>
+            Searching US biometric database (Rolled out in May 2020)
+          </li>
+          <li>
+            Searching YITU facial payment database (In use 2016 to present)
+          </li>
+          <li>
+            Searching 570 million CCTV camera database (In use 2016 to present)
+          </li>
+          <li>
+            <button class="blue center" style="width:150px;" onclick="goto_3()"><div ><p class="center">Continue</p></div></button>
+          </li>
+        </ul>
+      </td>
+      <td>
+        <div id="currentInfo" style="display:none">
+          <span id="year1" class="year">1990</span>
+          <span id="year2" class="year">1995</span>
+          <span id="year3" class="year">2000</span>
+          <span id="year4" class="year">2000</span>
+        </div>
+        <div id='globe'>
+        </div>
+      </td>
+    </tr>
+  </table>
+  <div id="credit_score_container">
+    <div id=credit_score_grid>
+      <p class="credit_score_title">Your Social Credit Score</p>
+      <div class="credit_score">
+        <div class="credit_score_mask">
+          <div class="credit_score_bg">
+            <div class="credit_score_segment" style="--bg:var(--aura-red); --value:68"></div>
+            <div class="credit_score_segment" style="--bg:var(--aura-yellow); --value:68; --offset:70"></div>
+            <div class="credit_score_segment" style="--bg:var(--aura-green); --value:40; --offset:140"></div>
+          </div>
+          <div class="credit_score_marker"></div>
+          <div class="credit_score_label"></div>
+        </div>
+      </div>
+      <p class="credit_score_subtitle">Contributing Factors. Press a factor for more information</p>
+        <div class="factor" style="--bg:var(--aura-green);" onclick="show_factor_overlay(0)"><div><h1>$320</h1><p>Purchases</p></div></div>
+        <div class="factor" style="--bg:var(--aura-yellow);" onclick="show_factor_overlay(1)"><div><h1>4</h1><p>Instances of foreign travel</p></div></div>
+        <div class="factor" style="--bg:var(--aura-green);" onclick="show_factor_overlay(2)"><div><h1>3</h1><p>Verified social networks</p></div></div>
+      <div class="credit_score_content">
+        <p>Based on this score you are able to travel freely, attend private schools, and apply for loans</p>
+      </div>
+      <div style="grid-area: button;"><button class="blue center" style="width:150px;" onclick="goto_4()"><div ><p class="center">Continue</p></div></button></div>
+    </div>
+
+    <div class="factor overlay">
+      <div>
+        <h1>Purchases</h1>
+        <p>Payments to businesses or individuals with poor social credit scores may result in lowering your score. Always encourage businesses and friends to be honest about their credit scores. Report false credit scores at <u>https://www.dhs.gov/how-do-i/report-suspicious-activity</u></p>
+        <ul>
+            <li><span class="credit-score-dot green"></span>You paid Jonas Wisser $18.00 using Venmo on July 7 2019</li>
+            <li><span class="credit-score-dot green"></span>You paid Anna Nelson $26.00 using Venmo on June 15 2019</li>
+            <li><span class="credit-score-dot yellow"></span>Receipt for $5.00 at Commonplace Coffee Co on Sep 19 2017</li>
+            <li><span class="credit-score-dot red"></span>You paid Micaela Corn $50.00 using Venmo on Sep 19 2017</li>
+            <li><span class="credit-score-dot yellow"></span>Receipt for $24.91 at Five Points Artisan Bakeshop on Sep 16 2017</li>
+            <li><span class="credit-score-dot green"></span>Receipt for $6.42 at Joes dog house on Sep 15 2017</li>
+            <li><span class="credit-score-dot yellow"></span>Receipt for $4.05 at Artisan Cafe on Aug 25 2017</li>
+            <li><span class="credit-score-dot red"></span>Receipt for $9.84 at New Mexican Cuisine on Aug 15 2017</li>
+            <li><span class="credit-score-dot green"></span>Receipt for $12.55 at Tazikis Mediterranean Cafe on Aug 9 2017</li>
+        </ul>
+      </div>
+      <button class="exit" style="width:60px;" onclick="close_factor_overlay(0)"><div ><p class="center">X</p></div></button>
+    </div>
+
+    <div class="factor overlay">
+      <div>
+        <h1>Instances of foreign travel</h1>
+        <p>Travelling excessively can affect your social credit in multiple ways. Trustworthy citizens are hard workers and do not travel frivolously. If your job requires excessive travel, your business must be registered with the Department of Homeland Security. In addition, the more places you go the more likely it is that facial recognition mistakes you for someone else.</p>
+        <ul>
+            <li><span class="credit-score-dot yellow"></span>Mexico City, MX on July 7 2019</li>
+            <li><span class="credit-score-dot yellow"></span>Atlanta, GA on on Sep 19 2017</li>
+            <li><span class="credit-score-dot yellow"></span>Quito, EC on Aug 25 2017</li>
+            <li><span class="credit-score-dot yellow"></span>Lima, PE on Aug 9 2017</li>
+        </ul>
+      </div>
+      <button class="exit" style="width:60px;" onclick="close_factor_overlay(1)"><div ><p class="center">X</p></div></button>
+    </div>
+
+    <div class="factor overlay">
+      <div>
+        <h1>Verified social networks</h1>
+        <p>If you are a part of a social network, it is highly reccomended to change your preferences to allow government oversight. Much like a normal credit score and credit cards, the more consistent and responsible your usage is, the better your social credit score becomes.</p>
+        <ul>
+            <li><span class="credit-score-dot green"></span>Facebook</li>
+            <li><span class="credit-score-dot green"></span>Instagram</li>
+            <li><span class="credit-score-dot green"></span>LinkedIn</li>
+        </ul>
+      </div>
+      <button class="exit" style="width:60px;" onclick="close_factor_overlay(2)"><div ><p class="center">X</p></div></button>
+    </div>
+
+  </div>
+  <div id='face_search_container'>
+    <div id="explanation_overlay">
+      <p class="center">Aura's facial recognition technology is state of the art, yet the possibility remains that our facial recognition software may confuse you with someone else. We believe that although this possibility is remote, we can leverage our technology to help you put your best face forward. On the next screen, we will show you close matches to your face in real time, as well as the effect of facial misrecognition on your perceived social credit score. Try to find a facial posture that presents you safely as an honest citizen. Keep in mind that what looks similar to a human may not look similar to an algorithm.</p>
+      <button onclick="hide_explanation()" style="width: 100px; position: absolute; margin-top: 15%;" class='blue center'>
+          <div>
+            <p class="center">Begin</p>
+          </div>
+      </button>
+    </div>
+    <div style="grid-row:1/3; height: 83%; width:80%;" >
+      <img  class="webcam-img"src="{{ url_for('static', filename='images/user.jpg') }}" style="width:80%;"/>
+      <p><span class="true credit-score-dot green"></span>True social credit score</p>
+      <p><span class="fake credit-score-dot"></span>Perceived social credit score</p>
+      <button onclick="goto_0()" style="width: 300px; margin-top: 5%;" class='blue'>
+          <div>
+            <p class="center">Finish and get results</p>
+          </div>
+      </button>
+    </div>
+    <div class='result' style="align-self:end;">
+      <img  id="result-img-A" src="{{ url_for('static', filename='images/000001.png') }}"/>
+      <span class="credit-score-dot-img"></span>
+    </div>
+    <div class='result' style="align-self:end;">
+      <img  id="result-img-B" src="{{ url_for('static', filename='images/000002.png') }}"/>
+      <span class="credit-score-dot-img"></span>
+    </div>
+    <div class='result' style="align-self:baseline;">
+      <img  id="result-img-C" src="{{ url_for('static', filename='images/000003.png') }}"/>
+      <span class="credit-score-dot-img"></span>
+    </div>
+    <div class='result' style="align-self:baseline;">
+      <img  id="result-img-D" src="{{ url_for('static', filename='images/000000.png') }}"/>
+      <span class="credit-score-dot-img"></span>
+    </div>
+    <div class='result' style="align-self:baseline; display:none;">
+      <img  id="result-img-E" src="{{ url_for('static', filename='images/000001.png') }}"/>
+      <span class="credit-score-dot-img"></span>
+    </div>
+    <div class='result' style="align-self:baseline; display:none;">
+      <img  id="result-img-F" src="{{ url_for('static', filename='images/000002.png') }}"/>
+      <span class="credit-score-dot-img"></span>
+    </div>
+  </div>
+
+  <script type="text/javascript" src="{{ url_for('static', filename='webgl-globe/globe/third-party/Detector.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='webgl-globe/globe/third-party/three.min.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='webgl-globe/globe/third-party/Tween.js') }}"></script>
+  <script type="text/javascript" src="{{ url_for('static', filename='webgl-globe/globe/globe.js') }}"></script>
+  </script>
+  <script type="text/javascript">
+  // SCRIPTS TO ANIMATE WOBBLE
+        function make_svg_wobble(n_points, center_x, center_y, radius=1, noise=0, time=0) {
+          var svg_string = "M 113.4 38.4 c  23.8 22.2    25 57.1 2.8 80.8 -22.2 23.8 -59.5   25  -83.2  2.8 C 9.2 99.8 7.9 64.9 30.1 41.1 52.3 17.4 89.6 16.2 113.4 38.4 Z";
+          var step = 1 / n_points * Math.PI * 2;
+          var handle_len = radius / n_points * 0.552 * 4;
+          var last_x = 0;
+          var last_y = 0;
+          for(var i=0; i < n_points + 1; i++){
+            var offset = Math.cos(i * step * 3 + 0 + (time +   0)**1*Math.PI*4) * noise / 2 + 
+                         Math.sin(i * step * 5 + 2 + (time +   0)**1*Math.PI*2) * noise / 2 - 
+                         Math.sin(i * step * 2 + 1 + ((time * 2 - 1)**3 + time + 1)*Math.PI*2/3) * noise / 3;
+            var x  = -Math.cos(i * step) * (radius + offset) + center_x;
+            var y  =  Math.sin(i * step) * (radius + offset) + center_y;
+            var x1 =  Math.sin((i-1) * step) * handle_len + last_x;
+            var y1 =  Math.cos((i-1) * step) * handle_len + last_y; 
+            var x2 = -Math.sin(i * step) * handle_len + x;
+            var y2 = -Math.cos(i * step) * handle_len + y;
+            var last_x  = x;
+            var last_y  = y;
+            if(i==0) {
+              svg_string +=   'M ' + x + ' ' + y + ' L';
+            } else {
+              // svg_string += ', C ' + x1 + ' ' + y1 + ', ' + x2 + ' ' + y2 + ', ' + x + ' ' + y;
+              svg_string += ' ' + x + ' ' + y;
+            }
+          }
+          return svg_string + 'Z;';
+        }
+
+        function make_wobble_anim(n_points, center_x, center_y, radius=1, noise=0, steps=50) {
+          var anim = ""
+          for(var i = 0; i < steps; i++) {
+            anim += make_svg_wobble(n_points, center_x, center_y, radius, noise, i/steps) + '\n'; 
+          }
+          anim += make_svg_wobble(n_points, center_x, center_y, radius, noise, 1); 
+          return anim
+        }
+
+        document.getElementById('path_anim').setAttribute('values', make_wobble_anim(80,73,80,70,5,20));
+        document.getElementById('path_anim').setAttribute('dur', '10s');
+  </script>
+  <script type="text/javascript"> 
+  //GLOBE STUFF 
+    if(!Detector.webgl){
+      Detector.addGetWebGLMessage();
+    } else {
+      var globeContainer = document.getElementById('globe');
+      var globe = new DAT.Globe(globeContainer);
+
+      console.log(globe);
+
+      var years = ['1','2','3', '4'];
+
+      console.log(globe);
+      var i, tweens = [];
+      
+      var settime = function(globe, t) {
+        return function() {
+          new TWEEN.Tween(globe).to({time: t/years.length},500).easing(TWEEN.Easing.Cubic.EaseOut).start();
+          var y = document.getElementById('year'+years[t]);
+          // if (y.getAttribute('class') === 'year active') {
+          //   return;
+          // }
+          var yy = document.getElementsByClassName('year');
+          for(i=0; i<yy.length; i++) {
+            yy[i].setAttribute('class','year');
+          }
+          // y.setAttribute('class', 'year active');
+        };
+      };
+      
+      for(var i = 0; i<years.length; i++) {
+        var y = document.getElementById('year'+years[i]);
+        y.addEventListener('mouseover', settime(globe,i), false);
+      }
+
+      var xhr;
+      TWEEN.start();      
+      xhr = new XMLHttpRequest();
+      xhr.open('GET', "{{ url_for('static', filename='webgl-globe/globe/population909500.json') }}", true);
+
+      xhr.onreadystatechange = function(e) {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            var data = JSON.parse(xhr.responseText);
+            window.data = data;
+            for (i=0;i<data.length;i++) {
+              globe.addData(data[i][1], {format: 'magnitude', name: data[i][0], animated: true});
+            }
+            globe.createPoints();
+            settime(globe,1)();
+            globe.animate();
+            // document.body.style.backgroundImage = 'none'; // remove loading
+          }
+        }
+      };
+      xhr.send(null);
+    }
+  </script>
+  
+  <script type="text/javascript">
+  // BUTTON STUFF
+    function reset_1() {
+      document.getElementById('user-video').style.marginLeft = "0px";
+      document.getElementById('user-video').style.width = "0px";
+      document.getElementById('begin').classList.add('pink');
+      document.getElementById('begin').classList.remove('blue');
+      document.getElementById('begin').children[0].children[0].innerHTML='Allow Aura to use my likeness';
+      document.getElementById('begin').onclick = begin
+    }
+
+    function reset_2() {
+      settime(globe,1)();
+      var children = document.getElementById('search-list').children;
+      for (var i = 0; i < children.length; i++) {
+        children[i].classList.remove("shown");
+        children[i].style.transition = "none";
+      } 
+    }
+
+    function search() {}
+
+    function stop_search() {}
+
+    function reset_3() {
+      set_credit_score(300,0);
+    }
+
+    function set_credit_score(score, idx) {
+      credit_scores = document.getElementsByClassName('credit_score');
+      credit_scores[idx].style.setProperty('--score', score); 
+    }
+    function goto_0() {
+      var transition = document.getElementById('landing_container').style.transition;
+      document.getElementById('landing_container').style.transition = "none";
+      document.getElementById('landing_container').style.marginTop="-0vh";
+      document.getElementById('landing_container').style.transition = transition;
+      document.getElementById('logo').style.opacity = "1";
+      document.getElementById('logo').style.display = "block";
+      reset_3();
+      reset_2();
+      reset_1();
+      stop_search();
+    }
+    function hide_logo() {
+      document.getElementById('logo').style.opacity = "0";
+      window.setTimeout(function() {
+        document.getElementById('logo').style.display = "none";
+      }, 1000);
+    }
+    function goto_1() {
+      document.getElementById('landing_container').style.marginTop="-0vh";
+      hide_logo();
+      reset_3();
+      reset_2();
+      reset_1();
+      stop_search();
+    }
+    function goto_2() {
+      document.getElementById('landing_container').style.marginTop="-100vh";
+      hide_logo();
+      var children = document.getElementById('search-list').children;
+      settime(globe, children.length)()
+      for (var i = 0; i < children.length; i++) {
+        children[i].classList.add("shown");
+        children[i].style.transition = "all .25s ease-in";
+        children[i].style.transitionDelay = 1+i*2 +"s";
+        if (i == children.length-1)
+          break;
+        window.setTimeout(settime(globe, i+1), (1+i*2) * 1000);
+      }
+      stop_search();
+      // window.setTimeout(goto_3, children.length * 2500 );
+    }
+    function goto_3() {
+      document.getElementById('landing_container').style.marginTop="-200vh";
+      hide_logo();
+      reset_1();
+      reset_3();
+      window.setTimeout(set_credit_score, 300, 755,0);
+      stop_search();
+      document.getElementById('explanation_overlay').style.opacity = 1;
+      document.getElementById('explanation_overlay').style.display = "block";
+    }
+    function goto_4() {
+      document.getElementById('landing_container').style.marginTop="-300vh";
+      search();
+      hide_logo();
+      reset_1();
+      reset_2();
+    }
+
+    function hide_explanation() {
+      document.getElementById('explanation_overlay').style.opacity = 0;
+      window.setTimeout(function() {
+        document.getElementById('explanation_overlay').style.display = "none";
+      }, 1000);
+    }
+
+    function begin() {
+      document.getElementById('user-video').style.marginLeft = "60px";
+      document.getElementById('user-video').style.display = "inline-block";
+      document.getElementById('user-video').style.width = "600px";
+      document.getElementById('begin').classList.remove('pink');
+      document.getElementById('begin').classList.add('blue');
+      document.getElementById('begin').children[0].children[0].innerHTML='Search global database';
+      document.getElementById('begin').onclick = goto_2
+    }
+
+    function hexToRgb(hex) {
+      // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+      var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+      hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+        return r + r + g + g + b + b;
+      });
+
+      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : null;
+    }
+
+    function rgbToHex(r, g, b) {
+      return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+    }
+
+
+    function red_to_green(amount) {
+      var green  = hexToRgb('#d2d75a');
+      var yellow = hexToRgb('#fec65f');
+      var red    = hexToRgb('#e46560');
+      ratio = amount * 2;
+      if (ratio <= 0)
+        return 'rgb(' + red.r + ',' + red.g + ',' + red.b + ')'
+      else if (ratio <= 1) {
+        return 'rgb(' + (red.r * (1-ratio) + yellow.r * ratio) + ',' +
+                        (red.g * (1-ratio) + yellow.g * ratio) + ',' +
+                        (red.b * (1-ratio) + yellow.b * ratio) + ')'
+      }
+      else if (ratio <= 2) {
+        return 'rgb(' + (yellow.r * (2-ratio) + green.r * (ratio - 1)) + ',' +
+                        (yellow.g * (2-ratio) + green.g * (ratio - 1)) + ',' +
+                        (yellow.b * (2-ratio) + green.b * (ratio - 1)) + ')'
+      } else {
+        return 'rgb(' + green.r + ',' + green.g + ',' + green.b + ')'
+      }
+
+    }
+
+    function close_factor_overlay(id){
+      document.getElementsByClassName('factor overlay')[id].style.opacity = 0;
+      window.setTimeout(function() {
+        document.getElementsByClassName('factor overlay')[id].style.display = "none";
+      }, 500);
+    }
+
+    function show_factor_overlay(id){
+      document.getElementsByClassName('factor overlay')[id].style.display = "block";
+      window.setTimeout(function() {
+        document.getElementsByClassName('factor overlay')[id].style.opacity = 1;
+      }, 50);
+    }
+  // SOCKET STUFF
+    $(document).ready(function(){
+      //connect to the socket server.
+      var socket = io.connect('http://' + document.domain + ':' + location.port + '/test');
+      socket.on("image", function(info) {
+        if (info.image){
+          // Obtain a blob: URL for the image data.
+          var arrayBufferView = new Uint8Array( info.buffer );
+          var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
+          var urlCreator = window.URL || window.webkitURL;
+          var imageUrl = urlCreator.createObjectURL( blob );
+          var imgs = document.getElementsByClassName('webcam-img');
+          var i
+          for(i=0; i < imgs.length; i++){
+            imgs[i].src = imageUrl;
+          }
+        }
+      });
+
+      stop_search = function stop_search() { socket.emit('stop_search', ''); }
+
+      search = function search() { socket.emit('search', ''); }
+
+      function paddy(num, padlen, padchar) {
+          var pad_char = typeof padchar !== 'undefined' ? padchar : '0';
+          var pad = new Array(1 + padlen).join(pad_char);
+          return (pad + num).slice(-pad.length);
+      }
+
+      function make_svg_wobble(n_points, center_x, center_y, radius=1, noise=0) {
+        var svg_string = "";
+        var step = 1 / n_points * Math.PI * 2;
+        var handle_len = radius / n_points * 0.552 * 4;
+        var last_x = 0;
+        var last_y = 0;
+        for(var i=0; i < n_points + 1; i++){
+          var x  = -Math.cos(i * step) * radius + center_x;
+          var y  =  Math.sin(i * step) * radius + center_y;
+          var x1 =  Math.sin((i-1) * step) * handle_len + last_x;
+          var y1 =  Math.cos((i-1) * step) * handle_len + last_y; 
+          var x2 = -Math.sin(i * step) * handle_len + x;
+          var y2 = -Math.cos(i * step) * handle_len + y;
+          var last_x  = x;
+          var last_y  = y;
+          if(i==0) {
+            svg_string +=   'M ' + x + ' ' + y;
+          } else {
+            svg_string += ', C ' + x1 + ' ' + y1 + ', ' + x2 + ' ' + y2 + ', ' + x + ' ' + y;
+          }
+        }
+        return svg_string + 'Z';
+      }
+
+      socket.on('searchResult', function(msg) {
+          // var pad = "000000";
+          // var a_file =  '/static/images/' + paddy(Math.floor(msg.A / 1000)*1000, 6, '0') +  '/' + paddy(msg.A, 6, '0') + '.png'; 
+          // var b_file =  '/static/images/' + paddy(Math.floor(msg.B / 1000)*1000, 6, '0') +  '/' + paddy(msg.B, 6, '0') + '.png'; 
+          // var c_file =  '/static/images/' + paddy(Math.floor(msg.C / 1000)*1000, 6, '0') +  '/' + paddy(msg.C, 6, '0') + '.png'; 
+          // var d_file =  '/static/images/' + paddy(Math.floor(msg.D / 1000)*1000, 6, '0') +  '/' + paddy(msg.D, 6, '0') + '.png'; 
+          // var e_file =  '/static/images/' + paddy(Math.floor(msg.E / 1000)*1000, 6, '0') +  '/' + paddy(msg.E, 6, '0') + '.png';
+          // var f_file =  '/static/images/' + paddy(Math.floor(msg.F / 1000)*1000, 6, '0') +  '/' + paddy(msg.F, 6, '0') + '.png';
+          document.getElementById('result-img-A').src = msg.A;
+          document.getElementById('result-img-B').src = msg.B;
+          document.getElementById('result-img-C').src = msg.C;
+          document.getElementById('result-img-D').src = msg.D;
+          document.getElementById('result-img-A').style.opacity = 1.0;
+          document.getElementById('result-img-B').style.opacity = 0.7;
+          document.getElementById('result-img-C').style.opacity = 0.4;
+          document.getElementById('result-img-D').style.opacity = 0.2;
+          // document.getElementById('result-img-A').parentElement.src = msg.A;
+          // document.getElementById('result-img-B').parentElement.src = msg.B;
+          // document.getElementById('result-img-C').parentElement.src = msg.C;
+          // document.getElementById('result-img-D').parentElement.src = msg.D;
+          document.getElementById('result-img-A').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Acred));
+          document.getElementById('result-img-B').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Bcred));
+          document.getElementById('result-img-C').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Ccred));
+          document.getElementById('result-img-D').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Dcred));
+
+          var average_score = (parseFloat(msg.Acred) + parseFloat(msg.Bcred) * 0.5 + parseFloat(msg.Ccred) * 0.25 + parseFloat(msg.Dcred) * 0.125 ) / 1.875;
+
+          document.getElementsByClassName('fake credit-score-dot')[0].style.background = red_to_green(average_score);
+
+          var user_score = 755;
+
+          document.getElementsByClassName('true credit-score-dot')[0].style.background = red_to_green((user_score - 300) / 500);
+          console.log(user_score, average_score)
+          var difference = Math.round((average_score * 500 + 300) - user_score);
+          if (difference >= 0) difference = "+"
+
+
+          var text = document.getElementsByClassName("fake credit-score-dot")[0].parentElement.innerHTML;
+          text = text.slice(0, text.indexOf('</span>')+7);
+          document.getElementsByClassName("fake credit-score-dot")[0].parentElement.innerHTML = text + "Perceived credit score (" + difference + ")";
+
+
+          // document.getElementById('result-img-E').src = msg.E;
+          // document.getElementById('result-img-F').src = msg.F;
+          // console.log([msg.A, msg.B, msg.C, msg.D, msg.E, msg.F]);
+          // console.log([msg.Adist, msg.Bdist, msg.Cdist, msg.Ddist, msg.Edist, msg.Fdist]);
+          // console.log([msg.Acred, msg.Bcred, msg.Ccred, msg.Dcred, msg.Ecred, msg.Fcred]);
+          // document.getElementById('layout').elem.classList.add('show');
+      });
+    });
+  </script>
+</body>
+</html>
