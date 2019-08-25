@@ -464,21 +464,21 @@
   </div>
   <div id='landing_container' style="">
     <table class="center">
-    <tr>
-      <td id='name_container'>
-        <p>Hello Nico</p>
-        <button id="begin" onclick="begin()" type="button" class='pink'>
-            <div >
-              <p class="center">Allow Aura to use my likeness</p>
-            </div>
-        </button>
-      </td>
-      <td>
-        <div id='user-video' style="margin-left: 0px; width: 0px; transition: all .25s ease-out;">
-          <img  class="webcam-img" src="{{ url_for('static', filename='images/user.jpg') }}"/>
-        </div>
-      </td>
-    </tr>
+      <tr>
+        <td id='name_container'>
+          <p id='name_text'>Hello Nico</p>
+          <button id="begin" onclick="begin()" type="button" class='pink'>
+              <div >
+                <p class="center">Allow Aura to use my likeness</p>
+              </div>
+          </button>
+        </td>
+        <td>
+          <div id='user-video' style="margin-left: 0px; width: 0px; transition: all .25s ease-out;">
+            <img  class="webcam-img" src="{{ url_for('static', filename='images/user.jpg') }}"/>
+          </div>
+        </td>
+      </tr>
     </table>
     <div id='logo'>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 768 768" height="40%" width="40%" class="center" style='display:inline-block;'>
@@ -566,7 +566,7 @@
         </div>
       </div>
       <p class="credit_score_subtitle">Contributing Factors. Press a factor for more information</p>
-        <div class="factor" style="--bg:var(--aura-green);" onclick="show_factor_overlay(0)"><div><h1>$320</h1><p>Purchases</p></div></div>
+        <div class="factor" style="--bg:var(--aura-green);" onclick="show_factor_overlay(0)"><div><h1 id="payment_total">$320</h1><p>Purchases</p></div></div>
         <div class="factor" style="--bg:var(--aura-yellow);" onclick="show_factor_overlay(1)"><div><h1>4</h1><p>Instances of foreign travel</p></div></div>
         <div class="factor" style="--bg:var(--aura-green);" onclick="show_factor_overlay(2)"><div><h1>3</h1><p>Verified social networks</p></div></div>
       <div class="credit_score_content">
@@ -579,7 +579,7 @@
       <div>
         <h1>Purchases</h1>
         <p>Payments to businesses or individuals with poor social credit scores may result in lowering your score. Always encourage businesses and friends to be honest about their credit scores. Report false credit scores at <u>https://www.dhs.gov/how-do-i/report-suspicious-activity</u></p>
-        <ul>
+        <ul id="payment_list">
             <li><span class="credit-score-dot green"></span>You paid Jonas Wisser $18.00 using Venmo on July 7 2019</li>
             <li><span class="credit-score-dot green"></span>You paid Anna Nelson $26.00 using Venmo on June 15 2019</li>
             <li><span class="credit-score-dot yellow"></span>Receipt for $5.00 at Commonplace Coffee Co on Sep 19 2017</li>
@@ -595,7 +595,7 @@
     </div>
 
     <div class="factor overlay">
-      <div>
+      <div id="travel_list">
         <h1>Instances of foreign travel</h1>
         <p>Travelling excessively can affect your social credit in multiple ways. Trustworthy citizens are hard workers and do not travel frivolously. If your job requires excessive travel, your business must be registered with the Department of Homeland Security. In addition, the more places you go the more likely it is that facial recognition mistakes you for someone else.</p>
         <ul>
@@ -612,7 +612,7 @@
       <div>
         <h1>Verified social networks</h1>
         <p>If you are a part of a social network, it is highly reccomended to change your preferences to allow government oversight. Much like a normal credit score and credit cards, the more consistent and responsible your usage is, the better your social credit score becomes.</p>
-        <ul>
+        <ul id="social_network_list">
             <li><span class="credit-score-dot green"></span>Facebook</li>
             <li><span class="credit-score-dot green"></span>Instagram</li>
             <li><span class="credit-score-dot green"></span>LinkedIn</li>
@@ -620,7 +620,6 @@
       </div>
       <button class="exit" style="width:60px;" onclick="close_factor_overlay(2)"><div ><p class="center">X</p></div></button>
     </div>
-
   </div>
   <div id='face_search_container'>
     <div id="explanation_overlay">
@@ -715,7 +714,7 @@
         document.getElementById('path_anim').setAttribute('dur', '10s');
   </script>
   <script type="text/javascript"> 
-  //GLOBE STUFF 
+  // GLOBE STUFF 
     if(!Detector.webgl){
       Detector.addGetWebGLMessage();
     } else {
@@ -772,8 +771,96 @@
       xhr.send(null);
     }
   </script>
-  
-  <script type="text/javascript">
+
+  <script>
+  // PUSHERMAN STUFF
+    // Placeholder for socketIO
+    function get_user_data(token) {}
+
+    window.addEventListener('userLogin', (event) => {
+        // userLogin triggers when a user has logged in. The event object
+        // contains event.detail.tapData which contains information about the user who has
+        // just tapped in and event.detail.users contains an object with all currently
+        // logged in users.
+        const tapData = event.detail.tapData;
+        console.log("Handling login for:", tapData.username);
+        hide_logo();
+        const nameText = document.getElementById('name_text');
+        console.log(tapData);
+        nameText.textContent = "Hello " + tapData.meta.first_name;
+        get_user_data(tapData.token);
+    })
+
+    window.addEventListener('userLogout', (event) => {
+        // userLogout triggers when a user has logged out (ie: tapped twice). The event object
+        // contains event.detail.tapData which contains information about the user who has
+        // just logged out and event.detail.users contains an object with all currently
+        // logged in users.
+        const tapData = event.detail.tapData;
+        console.log("Handling logout for:", tapData.username);
+        goto_0();
+        // const block = document.getElementById('login-info');
+        // block.textContent = JSON.stringify(tapData, null, 2);
+        // hljs.highlightBlock(block);
+        // block.classList.add('error');
+    })
+
+    function initializeLoginEvent(appName, handleLogout=true, timeout=0) {
+        // hostname should be staging.projectamelia.ai for testing
+        // and projectamelia.ai for production. Since this page is being
+        // hosted on the server, we can just use window.location.hostname to
+        // automatically pick the right one
+        // const hostname = window.location.hostname;
+        const hostname = 'staging.projectamelia.ai';
+        const ws = new WebSocket(`wss://${hostname}/pusherman/companions/login/websocket?app=${appName}`);
+
+        let users = {};
+        ws.onmessage = (event) => {
+            const tapData = JSON.parse(event.data);
+            const { username, token } = tapData;
+            var tapEvent;
+            const eventConfig = {
+                detail: {tapData, users, appName},
+                bubbles: true,
+            };
+            if (!handleLogout) {
+                for (var u in users) {
+                    delete users[u];
+                }
+            }
+            if (username in users) {
+                tapEvent = new CustomEvent('userLogout', eventConfig);
+                delete users[username]
+            } else {
+                tapEvent = new CustomEvent('userLogin', eventConfig);
+                users[username] = tapData;
+            }
+            window.dispatchEvent(tapEvent);
+        };
+
+        ws.onclose = (event) => {
+            timeout = Math.min((timeout + 1000) * 2, 30000);
+            console.log("Trying to reconnect to login websocket in:", timeout);
+            setTimeout(
+                () => {
+                    console.log("Attempting reconnect to login websocket");
+                    initializeLoginEvent(appName, handleLogout, timeout);
+                },
+                timeout
+            )
+        }
+
+        ws.onopen = async (event) => {
+            timeout = 0;
+            const eventConfig = {
+                detail: {users, appName},
+                bubbles: true,
+            };
+        };
+    }
+
+    initializeLoginEvent('social_calculator');
+    
   // BUTTON STUFF
     function reset_1() {
       document.getElementById('user-video').style.marginLeft = "0px";
@@ -793,8 +880,8 @@
       } 
     }
 
+    // Placeholders for socketIO
     function search() {}
-
     function stop_search() {}
 
     function reset_3() {
@@ -805,6 +892,7 @@
       credit_scores = document.getElementsByClassName('credit_score');
       credit_scores[idx].style.setProperty('--score', score); 
     }
+
     function goto_0() {
       var transition = document.getElementById('landing_container').style.transition;
       document.getElementById('landing_container').style.transition = "none";
@@ -817,12 +905,14 @@
       reset_1();
       stop_search();
     }
+
     function hide_logo() {
       document.getElementById('logo').style.opacity = "0";
       window.setTimeout(function() {
         document.getElementById('logo').style.display = "none";
       }, 1000);
     }
+
     function goto_1() {
       document.getElementById('landing_container').style.marginTop="-0vh";
       hide_logo();
@@ -831,6 +921,7 @@
       reset_1();
       stop_search();
     }
+
     function goto_2() {
       document.getElementById('landing_container').style.marginTop="-100vh";
       hide_logo();
@@ -847,6 +938,7 @@
       stop_search();
       // window.setTimeout(goto_3, children.length * 2500 );
     }
+
     function goto_3() {
       document.getElementById('landing_container').style.marginTop="-200vh";
       hide_logo();
@@ -857,6 +949,7 @@
       document.getElementById('explanation_overlay').style.opacity = 1;
       document.getElementById('explanation_overlay').style.display = "block";
     }
+
     function goto_4() {
       document.getElementById('landing_container').style.marginTop="-300vh";
       search();
@@ -921,7 +1014,6 @@
       } else {
         return 'rgb(' + green.r + ',' + green.g + ',' + green.b + ')'
       }
-
     }
 
     function close_factor_overlay(id){
@@ -956,9 +1048,10 @@
         }
       });
 
-      stop_search = function stop_search() { socket.emit('stop_search', ''); }
-
-      search = function search() { socket.emit('search', ''); }
+      // Fill placeholder functions
+      get_user_data = function get_user_data(token) { socket.emit('get_user_data', { token: token }); };
+      stop_search = function stop_search() { socket.emit('stop_search', ''); };
+      search = function search() { socket.emit('search', ''); };
 
       function paddy(num, padlen, padchar) {
           var pad_char = typeof padchar !== 'undefined' ? padchar : '0';
@@ -1039,6 +1132,82 @@
           // console.log([msg.Acred, msg.Bcred, msg.Ccred, msg.Dcred, msg.Ecred, msg.Fcred]);
           // document.getElementById('layout').elem.classList.add('show');
       });
+
+      // Hashing function
+      String.prototype.hashToFloat = function() {
+        var hash = 0, i, chr, float;
+        if (this.length === 0) return hash;
+        for (i = 0; i < this.length; i++) {
+          chr   = this.charCodeAt(i);
+          hash  = ((hash << 5) - hash) + chr;
+        }
+        float = Math.sin(hash) * 10000;
+        return float - Math.floor(float);
+        return hash;
+      };
+
+      function clearDiv(id){
+        var elem = document.getElementById(id);
+          while(elem.childElementCount > 0){
+            elem.removeChild(elem.firstChild); 
+          }
+      }
+
+      function fillPaymentList(payments){
+        clearDiv('payment_list')
+        var totalAmount = 0;
+        var averageScore = 0;
+        // console.log(payments);
+        var name = "";
+        var preposition = "";
+        for(var i=0; i < payments.length; i++) {
+        // for(var i=0; i < 10; i++) {
+          if(payments[i].from != "me")
+          {
+            name = payments[i].from;
+            preposition = "to";
+          }
+          else if(payments[i].to != "me")
+          {
+            name = payments[i].to;
+            preposition = "from";
+          }
+
+          var elem = document.getElementById('payment_list');
+          var paymentItem = document.createElement('li');
+          var paymentDot = document.createElement('span');
+          paymentDot.classList.add('credit-score-dot');
+          averageScore += name.hashToFloat();
+          totalAmount += payments[i].amount;
+          var hash = Math.round(name.hashToFloat() * 2.999 - 0.5);
+          paymentDot.classList.add(['red','yellow','green'][hash]);
+          paymentItem.appendChild(paymentDot);
+          var text = "$" + payments[i].amount + " " + preposition + " " + name;
+          paymentItem.appendChild(document.createTextNode(text));
+          elem.appendChild(paymentItem);
+        }
+        var scoreColor = ['red','yellow','green'][Math.round(averageScore / payments.length  * 2.999 - 0.5)];
+        document.getElementById('payment_total').textContent = "$" + Math.round(totalAmount);
+        document.getElementById('payment_total').parentElement.parentElement.style.setProperty('--bg', 'var(--aura-'+scoreColor+')');
+        return averageScore / payments.length;
+      }
+
+      function fillFlights(flights){
+
+      }
+
+      function fillSocialNetworks(networks){
+
+      }
+
+      socket.on('user_data', function(msg) {
+        data = JSON.parse(msg.json);
+        console.log(data.flights);
+        fillPaymentList(data.payments);
+        console.log(data.venmo_snippets);
+        console.log(data.squarecash_snippets);
+      });
+
     });
   </script>
 </body>

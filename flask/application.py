@@ -22,6 +22,7 @@ Updated 13th April 2018
 # Start with a basic flask app webpage.
 from flask_socketio import SocketIO, emit
 from flask import Flask, render_template, url_for, copy_current_request_context
+from flask_cors import CORS
 from random import random
 from time import sleep
 from threading import Thread, Event
@@ -37,11 +38,13 @@ import facenet
 
 import time
 import pickle
+import requests
 
 import cv2
 import numpy as np
 
 app = Flask(__name__)
+CORS(app)
 app.config['SECRET_KEY'] = 'secret!'
 app.config['DEBUG'] = True
 
@@ -52,13 +55,13 @@ socketio = SocketIO(app)
 thread = Thread()
 threadStopEvent = Event()
 
-images = np.load(os.path.join(os.path.dirname(__file__),'static','images','label_strings.npy'))
-embeddings = np.load(os.path.join(os.path.dirname(__file__),'static','images', 'embeddings.npy')).astype(np.float32)
-social_credit = np.random.random(images.shape)
+# images = nzp.load(os.path.join(os.path.dirname(__file__),'static','images','label_strings.npy'))
+# embeddings = np.load(os.path.join(os.path.dirname(__file__),'static','images', 'embeddings.npy')).astype(np.float32)
+# social_credit = np.random.random(images.shape)
 # with open('tree.pkl', 'rb') as f:
 #     tree = pickle.load(f)
-tree = NearestNeighbors(metric='cosine', leaf_size=10, algorithm='auto')
-tree.fit(embeddings)
+# tree = NearestNeighbors(metric='cosine', leaf_size=10, algorithm='auto')
+# tree.fit(embeddings)
 
 def rounded_rectangle(src, topLeft, bottomRight, lineColor, thickness, lineType, radius):
     # corners:
@@ -94,36 +97,6 @@ def add_overlays(frame, faces, frame_rate):
             break
     return frame
 
-# def crop_image(frame, bounding_boxes):
-#     if faces is None:
-#         return frame
-#     det = bounding_boxes[:,0:4]
-#     det_arr = []
-#     img_size = np.asarray(img.shape)[0:2]
-#     if nrof_faces>1:
-#         if args.detect_multiple_faces:
-#             for i in range(nrof_faces):
-#                 det_arr.append(np.squeeze(det[i]))
-#         else:
-#             bounding_box_size = (det[:,2]-det[:,0])*(det[:,3]-det[:,1])
-#             img_center = img_size / 2
-#             offsets = np.vstack([ (det[:,0]+det[:,2])/2-img_center[1], (det[:,1]+det[:,3])/2-img_center[0] ])
-#             offset_dist_squared = np.sum(np.power(offsets,2.0),0)
-#             index = np.argmax(bounding_box_size-offset_dist_squared*2.0) # some extra weight on the centering
-#             det_arr.append(det[index,:])
-#     else:
-#         det_arr.append(np.squeeze(det))
-
-#     for i, det in enumerate(det_arr):
-#         det = np.squeeze(det)
-#         bb = np.zeros(4, dtype=np.int32)
-#         bb[0] = np.maximum(det[0]-args.margin/2, 0)
-#         bb[1] = np.maximum(det[1]-args.margin/2, 0)
-#         bb[2] = np.minimum(det[2]+args.margin/2, img_size[1])
-#         bb[3] = np.minimum(det[3]+args.margin/2, img_size[0])
-#         cropped = img[bb[1]:bb[3],bb[0]:bb[2],:]
-#         scaled = cv2.resize(cropped, (args.image_size, args.image_size))
-
 def crop_square(img, size = None):
     h, w = img.shape[0], img.shape[1]
     min_size = min(h, w)
@@ -143,6 +116,7 @@ class VideoThread(Thread):
         super(VideoThread, self).__init__()
 
     def getVideoStream(self):
+        return
         frame_interval = 2  # Number of frames after which to run face detection
         frame_rate = 0
         frame_count = 30
@@ -212,6 +186,10 @@ class VideoThread(Thread):
     def run(self):
         self.getVideoStream()
 
+@app.route('/companion')
+def companion():
+    return render_template('CompanionsAdminPanel.html')
+
 @app.route('/')
 def index():
     #only by sending this page first will the client be connected to the socketio instance
@@ -235,6 +213,13 @@ def search(msg):
 def stop_search(msg):
     thread.search = False
 
+@socketio.on('get_user_data', namespace='/test')
+def login(msg):
+    r = requests.get('https://staging.projectamelia.ai/pusherman/social_calculator?token=' + msg['token'])
+    print(r.status_code)
+    assert(r.status_code == 200)
+    socketio.emit('user_data', { 'json': r.text },namespace='/test');
+            
 # @socketio.on('reset', namespace='/test')
 # def reset(msg):
 #     print(msg)
