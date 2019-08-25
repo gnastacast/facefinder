@@ -9,7 +9,6 @@ dependencies:
   - h5py=2.9.0=py37h5e291fa_0
   - mkl_random=1.0.2=py37h343c172_0
   - numpy-base=1.16.3=py37hc3f5095_0
-  - opencv=4.1.0=py37hb4945ee_5
   - pip=19.1.1=py37_0
   - python=3.7.3=h8c8aaf0_1
   - tensorboard=1.13.1=py37h33f27b4_0
