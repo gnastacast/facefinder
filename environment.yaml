@@ -17,6 +17,7 @@ dependencies:
   - tensorflow-estimator=1.13.0=py_0
   - tensorflow-gpu=1.13.1=h0d30ee6_0
   - vs2015_runtime=14.15.26706=h3a45250_4
+  - scikit-learn=0.21.3=py37h7208079_0
   - pip:
     - flask==1.0.3
     - flask-cors==3.0.8

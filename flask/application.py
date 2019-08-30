@@ -219,21 +219,6 @@ def login(msg):
     print(r.status_code)
     assert(r.status_code == 200)
     socketio.emit('user_data', { 'json': r.text },namespace='/test');
-            
-# @socketio.on('reset', namespace='/test')
-# def reset(msg):
-#     print(msg)
-#     thread.captured = False
-
-# @socketio.on('capture', namespace='/test')
-# def capture(msg):
-#     global thread
-#     if thread.lastEmbedding is None:
-#         return
-#     #Send messsage
-#     thread.captured = True
-#     ret, buf = cv2.imencode('.jpg', thread.lastFrame)
-#     socketio.emit('captureResult', { 'image': True, 'buffer': buf.tobytes() },namespace='/test');
 
 
 @socketio.on('connect', namespace='/test')
