@@ -1,6 +1,6 @@
 [submodule "facenet"]
 	path = facenet
-	url = git@github.com:gnastacast/facenet.git
+	url = https://github.com/gnastacast/facenet.git
 [submodule "flask/static/webgl-globe"]
 	path = flask/static/webgl-globe
-	url = git@github.com:gnastacast/webgl-globe.git
+	url = https://github.com/gnastacast/webgl-globe.git
