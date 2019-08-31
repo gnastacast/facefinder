@@ -422,7 +422,12 @@
       border-radius: 100px;
       border: 1px solid #ddd;
       padding: 0px 0px 20px 2%;
+      margin:13px 0px;
       width: 97%;
+    }
+
+    .factor.overlay li p {
+      display: inline;
     }
 
     .factor.overlay ul:after{
@@ -447,6 +452,11 @@
 
     .factor button.exit div{
       background-color: var(--aura-grey);
+    }
+
+    .blurry-text {
+      color: transparent;
+      text-shadow: 0 0 18px var(--aura-grey);
     }
 
   </style>
@@ -1160,6 +1170,7 @@
         // console.log(payments);
         var name = "";
         var preposition = "";
+        var elem = document.getElementById('payment_list');
         for(var i=0; i < payments.length; i++) {
         // for(var i=0; i < 10; i++) {
           if(payments[i].from != "me")
@@ -1172,14 +1183,12 @@
             name = payments[i].to;
             preposition = "from";
           }
-
-          var elem = document.getElementById('payment_list');
           var paymentItem = document.createElement('li');
           var paymentDot = document.createElement('span');
           paymentDot.classList.add('credit-score-dot');
           averageScore += name.hashToFloat();
           totalAmount += payments[i].amount;
-          var hash = Math.round(name.hashToFloat() * 2.999 - 0.5);
+          var hash = Math.round(averageScore * 2.999 - 0.5);
           paymentDot.classList.add(['red','yellow','green'][hash]);
           paymentItem.appendChild(paymentDot);
           var text = "$" + payments[i].amount + " " + preposition + " " + name;
@@ -1188,8 +1197,74 @@
         }
         var scoreColor = ['red','yellow','green'][Math.round(averageScore / payments.length  * 2.999 - 0.5)];
         document.getElementById('payment_total').textContent = "$" + Math.round(totalAmount);
-        document.getElementById('payment_total').parentElement.parentElement.style.setProperty('--bg', 'var(--aura-'+scoreColor+')');
+        document.getElementById('payment_total').parentElement.parentElement.style.setProperty('--bg', 'var(--aura-' + scoreColor + ')');
         return averageScore / payments.length;
+      }
+
+      function RNG(seed) {
+        // LCG using GCC's constants
+        this.m = 0x80000000; // 2**31;
+        this.a = 1103515245;
+        this.c = 12345;
+
+        this.state = seed ? seed : Math.floor(Math.random() * (this.m - 1));
+      }
+      RNG.prototype.nextInt = function() {
+        this.state = (this.a * this.state + this.c) % this.m;
+        return this.state;
+      }
+      RNG.prototype.nextFloat = function() {
+        // returns in range [0,1]
+        return this.nextInt() / (this.m - 1);
+      }
+      RNG.prototype.nextRange = function(start, end) {
+        // returns in range [start, end): including start, excluding end
+        // can't modulu nextInt because of weak randomness in lower bits
+        var rangeSize = end - start;
+        var randomUnder1 = this.nextInt() / this.m;
+        return start + Math.floor(randomUnder1 * rangeSize);
+      }
+      RNG.prototype.choice = function(array) {
+        return array[this.nextRange(0, array.length)];
+      }
+
+      var random_names = ['Liam','Noah','William','James','Logan','Benjamin','Mason','Elijah','Oliver','Jacob','Lucas','Michael','Alexander','Ethan','Daniel','Matthew','Aiden','Henry','Joseph','Jackson','Samuel','Sebastian','David','Carter','Wyatt','Jayden','John','Owen','Dylan','Luke','Gabriel','Anthony','Isaac','Grayson','Jack','Julian','Levi','Christopher','Joshua','Andrew','Lincoln','Mateo','Ryan','Jaxon','Nathan','Aaron','Isaiah','Thomas','Charles','Caleb','Josiah','Christian','Hunter','Eli','Jonathan','Connor','Landon','Adrian','Asher','Cameron','Leo','Theodore','Jeremiah','Hudson','Robert','Easton','Nolan','Nicholas','Ezra','Colton','Angel','Brayden','Jordan','Dominic','Austin','Ian','Adam','Elias','Jaxson','Greyson','Jose','Ezekiel','Carson','Evan','Maverick','Bryson','Jace','Cooper','Xavier','Parker','Roman','Jason','Santiago','Chase','Sawyer','Gavin','Leonardo','Kayden','Ayden','Jameson'];
+
+      var random_last_names = ['Hamilton', 'Barr', 'Shepard', 'Hatfield', 'Mcmahon', 'Rich', 'Cox', 'Faulkner', 'Payne', 'Miller', 'Choi', 'Bender', 'Black', 'Rose', 'Ross', 'Hayes', 'Lowe', 'Deleon', 'Humphrey', 'Shah', 'Sanchez', 'Blanchard', 'Andrade', 'Gilmore', 'Haney', 'David', 'Ray', 'Estes', 'Gilbert', 'Landry', 'Harvey', 'Hooper', 'Mccarty', 'Ellis', 'Rowe', 'Dickson', 'Moyer', 'Holder', 'Cantrell', 'House', 'Sellers', 'Hoffman', 'Orozco', 'Wagner', 'Hahn', 'Jensen', 'Mcintyre', 'Phelps', 'Morton', 'Carr', 'Key', 'Little', 'Hall', 'Blackburn', 'Caldwell', 'Burns', 'Bishop', 'Cooke', 'Savage', 'Blake', 'Pope', 'Nash', 'Walter', 'Kirk', 'Braun', 'Harrell', 'Santiago', 'Knight', 'Huff', 'Mejia', 'Glenn', 'Burnett', 'Harding', 'Trujillo', 'Conner', 'Graves', 'Parks', 'Maynard', 'Pugh', 'Brandt', 'Gonzales', 'Harmon', 'Mcguire', 'Kaufman', 'Dennis', 'York', 'Bray', 'Castro', 'Bartlett', 'Khan', 'Singh', 'Mckinney', 'Moon', 'Suarez', 'Le', 'Sherman', 'Williams', 'Joyce', 'Obrien', 'Spencer', 'Rollins', 'Walls', 'Gonzalez', 'Townsend', 'French', 'Clay', 'Hester', 'Wilkinson', 'Willis', 'Hunt', 'Brown', 'Campos', 'Ferrell', 'Weaver', 'Dillon', 'Lucero', 'Spears', 'Stephenson', 'Baxter', 'Lambert', 'Barajas', 'Gates', 'Vega', 'Bowman', 'Clements', 'Rivas', 'Bradley', 'Mendez', 'Sanders', 'Stokes', 'Ibarra', 'Russo', 'Vargas', 'Lozano', 'Bean', 'Sampson', 'Haynes', 'Richmond', 'Holden', 'Rubio', 'Hopkins', 'Nicholson', 'Cervantes', 'Lynch', 'Gross', 'Stark', 'Morris', 'Greene', 'Rosario', 'Cisneros', 'Williamson', 'Benjamin', 'Woodard', 'Love', 'Schneider', 'Avery', 'Frost', 'Gomez', 'West', 'Morrison', 'Heath', 'Whitney', 'Woodward', 'Cortez', 'Travis', 'Guzman', 'Terrell', 'Valdez', 'Davies', 'Hoover', 'Sandoval', 'Finley', 'Walsh', 'Cooper', 'Clayton', 'Fields', 'Duke', 'Atkins', 'Briggs', 'Beard', 'Douglas', 'Mcmillan', 'Goodman', 'Price', 'Howe', 'Arroyo', 'Robles', 'Gutierrez', 'Levine', 'Cordova', 'Powers', 'Harper', 'Acosta', 'Dyer', 'Chaney', 'Gillespie', 'Mullins', 'Mcpherson', 'Winters', 'Stone', ]
+
+      function fake_payments(name) {
+        clearDiv('payment_list')
+        var averageScore = 0;
+        var rng = new RNG(Math.round(('flights'+name).hashToFloat() * 10000));
+        var n_payments = rng.nextInt() % 50 + 10;
+        var payment_text = ['Payment from ', 'Payment to ', 'Purchase from '];
+        var elem = document.getElementById('payment_list');
+        var bias = 2 * rng.nextFloat();
+        if(bias < 1) 
+        {
+          bias = bias / 2 + 0.5;
+        }
+        for(var i=0; i<n_payments; i++)
+        {
+          var paymentItem = document.createElement('li');
+          var paymentDot = document.createElement('span');
+          paymentDot.classList.add('credit-score-dot');
+          var score = rng.nextFloat() ** bias;
+          averageScore += score;
+          var hash = Math.round(score * 2.999 - 0.5);
+          paymentDot.classList.add(['red','yellow','green'][hash]);
+          paymentItem.appendChild(paymentDot);
+          var text = document.createElement('p');
+          text.appendChild(document.createTextNode(rng.choice(payment_text)));
+          var nameText = document.createElement('span');
+          nameText.appendChild(document.createTextNode(rng.choice(random_names) + ' ' + rng.choice(random_last_names)));
+          nameText.classList.add('blurry-text');
+          text.appendChild(nameText)
+          paymentItem.appendChild(text);
+          elem.appendChild(paymentItem);
+        } 
+        var scoreColor = ['red','yellow','green'][Math.round(averageScore / n_payments  * 2.999 - 0.5)];
+        document.getElementById('payment_total').parentElement.parentElement.style.setProperty('--bg', 'var(--aura-' + scoreColor + ')');
       }
 
       function fillFlights(flights){
