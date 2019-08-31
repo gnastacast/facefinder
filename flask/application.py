@@ -52,11 +52,11 @@ socketio = SocketIO(app)
 thread = Thread()
 threadStopEvent = Event()
 
-images = nzp.load(os.path.join(os.path.dirname(__file__),'static','images','label_strings.npy'))
+images = np.load(os.path.join(os.path.dirname(__file__),'static','images','label_strings.npy'))
 embeddings = np.load(os.path.join(os.path.dirname(__file__),'static','images', 'embeddings.npy')).astype(np.float32)
 social_credit = np.random.random(images.shape)
-with open('tree.pkl', 'rb') as f:
-    tree = pickle.load(f)
+# with open('tree.pkl', 'rb') as f:
+#     tree = pickle.load(f)
 tree = NearestNeighbors(metric='cosine', leaf_size=10, algorithm='auto')
 tree.fit(embeddings)
 

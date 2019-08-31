@@ -576,9 +576,9 @@
         </div>
       </div>
       <p class="credit_score_subtitle">Contributing Factors. Press a factor for more information</p>
-        <div class="factor" style="--bg:var(--aura-green);" onclick="show_factor_overlay(0)"><div><h1 id="payment_total">$320</h1><p>Purchases</p></div></div>
-        <div class="factor" style="--bg:var(--aura-yellow);" onclick="show_factor_overlay(1)"><div><h1>4</h1><p>Instances of foreign travel</p></div></div>
-        <div class="factor" style="--bg:var(--aura-green);" onclick="show_factor_overlay(2)"><div><h1>3</h1><p>Verified social networks</p></div></div>
+        <div class="factor" style="--bg:var(--aura-green);"  onclick="show_factor_overlay(0)"><div><p>Purchases and payments</p><h1 id="payment_total">$320</h1></div></div>
+        <div class="factor" style="--bg:var(--aura-yellow);" onclick="show_factor_overlay(1)"><div><p>Travel</p><h1 id="travel_total">4</h1></div></div>
+        <div class="factor" style="--bg:var(--aura-green);"  onclick="show_factor_overlay(2)"><div><p>Verified social networks</p><h1 id="social_total">3</h1></div></div>
       <div class="credit_score_content">
         <p>Based on this score you are able to travel freely, attend private schools, and apply for loans</p>
       </div>
@@ -605,10 +605,10 @@
     </div>
 
     <div class="factor overlay">
-      <div id="travel_list">
+      <div>
         <h1>Instances of foreign travel</h1>
         <p>Travelling excessively can affect your social credit in multiple ways. Trustworthy citizens are hard workers and do not travel frivolously. If your job requires excessive travel, your business must be registered with the Department of Homeland Security. In addition, the more places you go the more likely it is that facial recognition mistakes you for someone else.</p>
-        <ul>
+        <ul id="travel_list">
             <li><span class="credit-score-dot yellow"></span>Mexico City, MX on July 7 2019</li>
             <li><span class="credit-score-dot yellow"></span>Atlanta, GA on on Sep 19 2017</li>
             <li><span class="credit-score-dot yellow"></span>Quito, EC on Aug 25 2017</li>
@@ -898,6 +898,7 @@
       set_credit_score(300,0);
     }
 
+    var credit_score = 300;
     function set_credit_score(score, idx) {
       credit_scores = document.getElementsByClassName('credit_score');
       credit_scores[idx].style.setProperty('--score', score); 
@@ -950,11 +951,11 @@
     }
 
     function goto_3() {
+      window.setTimeout(set_credit_score, credit_score, 755,0);
       document.getElementById('landing_container').style.marginTop="-200vh";
       hide_logo();
       reset_1();
       reset_3();
-      window.setTimeout(set_credit_score, 300, 755,0);
       stop_search();
       document.getElementById('explanation_overlay').style.opacity = 1;
       document.getElementById('explanation_overlay').style.display = "block";
@@ -1188,7 +1189,7 @@
           paymentDot.classList.add('credit-score-dot');
           averageScore += name.hashToFloat();
           totalAmount += payments[i].amount;
-          var hash = Math.round(averageScore * 2.999 - 0.5);
+          var hash = Math.round(name.hashToFloat() * 2.999 - 0.5);
           paymentDot.classList.add(['red','yellow','green'][hash]);
           paymentItem.appendChild(paymentDot);
           var text = "$" + payments[i].amount + " " + preposition + " " + name;
@@ -1230,41 +1231,62 @@
 
       var random_names = ['Liam','Noah','William','James','Logan','Benjamin','Mason','Elijah','Oliver','Jacob','Lucas','Michael','Alexander','Ethan','Daniel','Matthew','Aiden','Henry','Joseph','Jackson','Samuel','Sebastian','David','Carter','Wyatt','Jayden','John','Owen','Dylan','Luke','Gabriel','Anthony','Isaac','Grayson','Jack','Julian','Levi','Christopher','Joshua','Andrew','Lincoln','Mateo','Ryan','Jaxon','Nathan','Aaron','Isaiah','Thomas','Charles','Caleb','Josiah','Christian','Hunter','Eli','Jonathan','Connor','Landon','Adrian','Asher','Cameron','Leo','Theodore','Jeremiah','Hudson','Robert','Easton','Nolan','Nicholas','Ezra','Colton','Angel','Brayden','Jordan','Dominic','Austin','Ian','Adam','Elias','Jaxson','Greyson','Jose','Ezekiel','Carson','Evan','Maverick','Bryson','Jace','Cooper','Xavier','Parker','Roman','Jason','Santiago','Chase','Sawyer','Gavin','Leonardo','Kayden','Ayden','Jameson'];
 
-      var random_last_names = ['Hamilton', 'Barr', 'Shepard', 'Hatfield', 'Mcmahon', 'Rich', 'Cox', 'Faulkner', 'Payne', 'Miller', 'Choi', 'Bender', 'Black', 'Rose', 'Ross', 'Hayes', 'Lowe', 'Deleon', 'Humphrey', 'Shah', 'Sanchez', 'Blanchard', 'Andrade', 'Gilmore', 'Haney', 'David', 'Ray', 'Estes', 'Gilbert', 'Landry', 'Harvey', 'Hooper', 'Mccarty', 'Ellis', 'Rowe', 'Dickson', 'Moyer', 'Holder', 'Cantrell', 'House', 'Sellers', 'Hoffman', 'Orozco', 'Wagner', 'Hahn', 'Jensen', 'Mcintyre', 'Phelps', 'Morton', 'Carr', 'Key', 'Little', 'Hall', 'Blackburn', 'Caldwell', 'Burns', 'Bishop', 'Cooke', 'Savage', 'Blake', 'Pope', 'Nash', 'Walter', 'Kirk', 'Braun', 'Harrell', 'Santiago', 'Knight', 'Huff', 'Mejia', 'Glenn', 'Burnett', 'Harding', 'Trujillo', 'Conner', 'Graves', 'Parks', 'Maynard', 'Pugh', 'Brandt', 'Gonzales', 'Harmon', 'Mcguire', 'Kaufman', 'Dennis', 'York', 'Bray', 'Castro', 'Bartlett', 'Khan', 'Singh', 'Mckinney', 'Moon', 'Suarez', 'Le', 'Sherman', 'Williams', 'Joyce', 'Obrien', 'Spencer', 'Rollins', 'Walls', 'Gonzalez', 'Townsend', 'French', 'Clay', 'Hester', 'Wilkinson', 'Willis', 'Hunt', 'Brown', 'Campos', 'Ferrell', 'Weaver', 'Dillon', 'Lucero', 'Spears', 'Stephenson', 'Baxter', 'Lambert', 'Barajas', 'Gates', 'Vega', 'Bowman', 'Clements', 'Rivas', 'Bradley', 'Mendez', 'Sanders', 'Stokes', 'Ibarra', 'Russo', 'Vargas', 'Lozano', 'Bean', 'Sampson', 'Haynes', 'Richmond', 'Holden', 'Rubio', 'Hopkins', 'Nicholson', 'Cervantes', 'Lynch', 'Gross', 'Stark', 'Morris', 'Greene', 'Rosario', 'Cisneros', 'Williamson', 'Benjamin', 'Woodard', 'Love', 'Schneider', 'Avery', 'Frost', 'Gomez', 'West', 'Morrison', 'Heath', 'Whitney', 'Woodward', 'Cortez', 'Travis', 'Guzman', 'Terrell', 'Valdez', 'Davies', 'Hoover', 'Sandoval', 'Finley', 'Walsh', 'Cooper', 'Clayton', 'Fields', 'Duke', 'Atkins', 'Briggs', 'Beard', 'Douglas', 'Mcmillan', 'Goodman', 'Price', 'Howe', 'Arroyo', 'Robles', 'Gutierrez', 'Levine', 'Cordova', 'Powers', 'Harper', 'Acosta', 'Dyer', 'Chaney', 'Gillespie', 'Mullins', 'Mcpherson', 'Winters', 'Stone', ]
+      var random_last_names = ['Hamilton', 'Barr', 'Shepard', 'Hatfield', 'Mcmahon', 'Rich', 'Cox', 'Faulkner', 'Payne', 'Miller', 'Choi', 'Bender', 'Black', 'Rose', 'Ross', 'Hayes', 'Lowe', 'Deleon', 'Humphrey', 'Shah', 'Sanchez', 'Blanchard', 'Andrade', 'Gilmore', 'Haney', 'David', 'Ray', 'Estes', 'Gilbert', 'Landry', 'Harvey', 'Hooper', 'Mccarty', 'Ellis', 'Rowe', 'Dickson', 'Moyer', 'Holder', 'Cantrell', 'House', 'Sellers', 'Hoffman', 'Orozco', 'Wagner', 'Hahn', 'Jensen', 'Mcintyre', 'Phelps', 'Morton', 'Carr', 'Key', 'Little', 'Hall', 'Blackburn', 'Caldwell', 'Burns', 'Bishop', 'Cooke', 'Savage', 'Blake', 'Pope', 'Nash', 'Walter', 'Kirk', 'Braun', 'Harrell', 'Santiago', 'Knight', 'Huff', 'Mejia', 'Glenn', 'Burnett', 'Harding', 'Trujillo', 'Conner', 'Graves', 'Parks', 'Maynard', 'Pugh', 'Brandt', 'Gonzales', 'Harmon', 'Mcguire', 'Kaufman', 'Dennis', 'York', 'Bray', 'Castro', 'Bartlett', 'Khan', 'Singh', 'Mckinney', 'Moon', 'Suarez', 'Le', 'Sherman', 'Williams', 'Joyce', 'Obrien', 'Spencer', 'Rollins', 'Walls', 'Gonzalez', 'Townsend', 'French', 'Clay', 'Hester', 'Wilkinson', 'Willis', 'Hunt', 'Brown', 'Campos', 'Ferrell', 'Weaver', 'Dillon', 'Lucero', 'Spears', 'Stephenson', 'Baxter', 'Lambert', 'Barajas', 'Gates', 'Vega', 'Bowman', 'Clements', 'Rivas', 'Bradley', 'Mendez', 'Sanders', 'Stokes', 'Ibarra', 'Russo', 'Vargas', 'Lozano', 'Bean', 'Sampson', 'Haynes', 'Richmond', 'Holden', 'Rubio', 'Hopkins', 'Nicholson', 'Cervantes', 'Lynch', 'Gross', 'Stark', 'Morris', 'Greene', 'Rosario', 'Cisneros', 'Williamson', 'Benjamin', 'Woodard', 'Love', 'Schneider', 'Avery', 'Frost', 'Gomez', 'West', 'Morrison', 'Heath', 'Whitney', 'Woodward', 'Cortez', 'Travis', 'Guzman', 'Terrell', 'Valdez', 'Davies', 'Hoover', 'Sandoval', 'Finley', 'Walsh', 'Cooper', 'Clayton', 'Fields', 'Duke', 'Atkins', 'Briggs', 'Beard', 'Douglas', 'Mcmillan', 'Goodman', 'Price', 'Howe', 'Arroyo', 'Robles', 'Gutierrez', 'Levine', 'Cordova', 'Powers', 'Harper', 'Acosta', 'Dyer', 'Chaney', 'Gillespie', 'Mullins', 'Mcpherson', 'Winters', 'Stone']
 
-      function fake_payments(name) {
-        clearDiv('payment_list')
-        var averageScore = 0;
-        var rng = new RNG(Math.round(('flights'+name).hashToFloat() * 10000));
-        var n_payments = rng.nextInt() % 50 + 10;
-        var payment_text = ['Payment from ', 'Payment to ', 'Purchase from '];
-        var elem = document.getElementById('payment_list');
+      function fake_data(name, type, text_options, bias_min, bias_max) {
+        clearDiv(type + '_list')
+        var total_score = 0;
+        var rng = new RNG(Math.round((type + name).hashToFloat() * 10000));
+        var n_elements = rng.nextInt() % 50 + 10;
+        var elem = document.getElementById(type + '_list');
         var bias = 2 * rng.nextFloat();
         if(bias < 1) 
         {
-          bias = bias / 2 + 0.5;
+          bias = bias * (1-bias_min) + bias_min;
+        } else {
+          bias = (bias - 1) * (bias_max - 1) + 1;
         }
-        for(var i=0; i<n_payments; i++)
+        console.log(bias);
+        for(var i=0; i<n_elements; i++)
         {
-          var paymentItem = document.createElement('li');
-          var paymentDot = document.createElement('span');
-          paymentDot.classList.add('credit-score-dot');
-          var score = rng.nextFloat() ** bias;
-          averageScore += score;
-          var hash = Math.round(score * 2.999 - 0.5);
-          paymentDot.classList.add(['red','yellow','green'][hash]);
-          paymentItem.appendChild(paymentDot);
+          var listElem = document.createElement('li');
+          var scoreDot = document.createElement('span');
+          scoreDot.classList.add('credit-score-dot');
+          var score = Math.pow(rng.nextFloat(), bias);
+          total_score += score;
+          scoreDot.classList.add(['red','yellow','green'][Math.floor(score * 3)]);
+          listElem.appendChild(scoreDot);
           var text = document.createElement('p');
-          text.appendChild(document.createTextNode(rng.choice(payment_text)));
+          text.appendChild(document.createTextNode(text_options[Math.floor(score * text_options.length)]));
           var nameText = document.createElement('span');
           nameText.appendChild(document.createTextNode(rng.choice(random_names) + ' ' + rng.choice(random_last_names)));
           nameText.classList.add('blurry-text');
           text.appendChild(nameText)
-          paymentItem.appendChild(text);
-          elem.appendChild(paymentItem);
-        } 
-        var scoreColor = ['red','yellow','green'][Math.round(averageScore / n_payments  * 2.999 - 0.5)];
+          listElem.appendChild(text);
+          elem.appendChild(listElem);
+        }
+        return [total_score, n_elements];
+      }
+
+      function fakePayments(name) {
+        var text_options = ['Payment from ', 'Payment to ', 'Purchase from ', 'Payment from ', 'Payment to ', 'Purchase from ', 'Payment from ', 'Payment to ', 'Purchase from '];
+        var retval = fake_data(name, 'payment', text_options, 0.2, 4);
+        var averageScore = retval[0] / retval[1];
+        console.log(retval);
+        var scoreColor = ['red','yellow','green'][Math.floor(averageScore * 3)];
         document.getElementById('payment_total').parentElement.parentElement.style.setProperty('--bg', 'var(--aura-' + scoreColor + ')');
+        document.getElementById('payment_total').textContent = ['Poor','Average', 'Excellent'][Math.floor(averageScore * 3)];
+        return averageScore
+      }
+
+      function fakeFlights(name) {
+        var text_options = ['Unauthorized travel to ', 'Authorized travel to '];
+        var retval = fake_data(name, 'travel', text_options, 0.2, 4);
+        var averageScore = retval[0] / retval[1];
+        var scoreColor = ['red','yellow','green'][Math.floor(averageScore * 3)];
+        document.getElementById('travel_total').parentElement.parentElement.style.setProperty('--bg', 'var(--aura-' + scoreColor + ')');
+        document.getElementById('travel_total').textContent = ['Poor','Average', 'Excellent'][Math.floor(averageScore * 3)];
+        return averageScore
       }
 
       function fillFlights(flights){
@@ -1277,8 +1299,16 @@
 
       socket.on('user_data', function(msg) {
         data = JSON.parse(msg.json);
+        var travelScore, paymentScore, socialScore = 0;
+        if(data.payments.length == 0) {
+          paymentScore = fakePayments(data.name);
+        } else {
+          paymentScore = fillPaymentList(data.payments);
+        }
+        travelScore = fakeFlights(data.name);
+        socialScore = 1.0;
+        credit_score = Math.round(850 * (travelScore + paymentScore + socialScore) / 3.0);
         console.log(data.flights);
-        fillPaymentList(data.payments);
         console.log(data.venmo_snippets);
         console.log(data.squarecash_snippets);
       });
