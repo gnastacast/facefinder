@@ -16,9 +16,6 @@ Updated 13th April 2018
 
 """
 
-
-
-
 # Start with a basic flask app webpage.
 from flask_socketio import SocketIO, emit
 from flask import Flask, render_template, url_for, copy_current_request_context
@@ -55,13 +52,13 @@ socketio = SocketIO(app)
 thread = Thread()
 threadStopEvent = Event()
 
-# images = nzp.load(os.path.join(os.path.dirname(__file__),'static','images','label_strings.npy'))
-# embeddings = np.load(os.path.join(os.path.dirname(__file__),'static','images', 'embeddings.npy')).astype(np.float32)
-# social_credit = np.random.random(images.shape)
-# with open('tree.pkl', 'rb') as f:
-#     tree = pickle.load(f)
-# tree = NearestNeighbors(metric='cosine', leaf_size=10, algorithm='auto')
-# tree.fit(embeddings)
+images = nzp.load(os.path.join(os.path.dirname(__file__),'static','images','label_strings.npy'))
+embeddings = np.load(os.path.join(os.path.dirname(__file__),'static','images', 'embeddings.npy')).astype(np.float32)
+social_credit = np.random.random(images.shape)
+with open('tree.pkl', 'rb') as f:
+    tree = pickle.load(f)
+tree = NearestNeighbors(metric='cosine', leaf_size=10, algorithm='auto')
+tree.fit(embeddings)
 
 def rounded_rectangle(src, topLeft, bottomRight, lineColor, thickness, lineType, radius):
     # corners:
@@ -116,7 +113,6 @@ class VideoThread(Thread):
         super(VideoThread, self).__init__()
 
     def getVideoStream(self):
-        return
         frame_interval = 2  # Number of frames after which to run face detection
         frame_rate = 0
         frame_count = 30
