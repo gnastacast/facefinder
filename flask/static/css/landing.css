@@ -1,0 +1,451 @@
+ /* Front page */
+    #landing_container{
+      background-color: var(--aura-grey);
+      color:white;
+      padding:0;
+      width:100vw;
+      height:100vh;
+      transition: margin-top 1s ease-in-out;
+      position: relative;
+      margin-top:0vh;
+    }
+
+    #logo{
+      display:block;
+      position:fixed;
+      top:0;
+      background-color:var(--aura-grey);
+      width:100vw;
+      height:100vh;
+      opacity:1;
+      transition: opacity 0.5s ease-out;
+      z-index: 99;
+    }
+
+    #logo > svg{
+      background-color:var(--aura-grey);
+    }
+
+    #name_container{
+      font-size: 60pt;
+      opacity:100;
+      transition: opacity 0.5s ease-out;
+      transition-delay: .5s;
+    }
+
+    #name_container p{
+      margin:0;
+    }
+
+    #begin {
+      width:340px;
+    }
+
+  /* Globe search */
+    #globe_container{
+      background-color: white;
+      color:var(--aura-grey);
+      padding:0;
+      width:100vw;
+      height:100vh;
+    }
+
+    #globe_container ul{
+      list-style: none;
+      margin-left:10vw;
+      font-size:1.2vw;
+      width:70%;
+
+    }
+
+    #globe_container li{
+      height: 0;
+      line-height: 2em;
+      margin: 0;
+      opacity:0;
+      padding: 0 0.5em;
+      overflow: hidden;
+      transition: all .25s ease-in;
+    }
+
+    #globe_container li.shown {
+      height: 2em;
+      margin: 10px 0;
+      opacity:1;
+    }
+
+    #globe_container li.shown:last-child{
+      height:5em;
+    }
+
+    #globe{
+      display: inline-block;
+      width:700px;
+      height: 100vh;
+    }
+  
+  /* Search results */
+
+  /* Temporary UI */
+    #main_buttons{
+      position:fixed;
+      top:0;
+      right:0;
+      z-index: 100;
+      display:none;
+    }
+    #main_buttons ul{
+      list-style: none;
+    }
+
+    #main_buttons li{
+      padding:10px;
+      background: var(--aura-green);
+      border-radius: 100px;
+      margin:10px;
+    }
+  
+  /* Face Search */
+    #explanation_overlay{
+      position: absolute;
+      height: 100vh;
+      width: 100vw;
+      top: 0;
+      left: 1vw;
+      color: white;
+      background-color: var(--aura-grey);
+      font-size: 26pt;
+      line-height: 36pt;
+      z-index: 1;
+      transition:opacity 1s;
+    }
+
+    #explanation_overlay > p{
+      padding: 10%;
+      text-align: left;
+    }
+
+    #face_search_container{
+      position:relative;
+      background-color: white;
+      color:var(--aura-grey);
+      padding:0;
+      width:100vw;
+      height:100vh;
+      font-size: 20pt;
+      display: inline-grid;
+      grid-template-columns: 48vw 23vw 23vw;
+      grid-template-rows: 50vh 50vh;
+      width: 60vw;
+      height: 100vh;
+      grid-gap: 2vw;
+      justify-items: center;
+      align-items: center;
+      margin-left: -1vw;
+    }
+
+    #face_search_container img{
+      display:inline-block;
+      width:100%;
+      border-radius: 50px;
+    }
+
+    #user-video{
+      overflow: hidden;
+      width: 0px;
+      margin-left: 0;
+      /*display: none;*/
+      transition: all .25s ease-out;
+      border-radius:20px;
+    }
+
+    .webcam-img {
+      border-radius: 50px;
+    }
+
+    [class*='credit-score-dot']  {
+      content: "";
+      height: 50px;
+      width: 50px;
+      border-radius: 1000px;
+      display: inline-block;
+      margin-right: 20px;
+      transform: translate(0px,15px);
+      animation-name: example;
+      animation-duration: 4s;
+    }
+
+    .credit-score-dot-img{
+        transform: translate(00px, -80px);
+        margin: -0px 0px -30px 30px;
+        position: absolute;
+    }
+
+  /* Credit score */
+    .credit_score {
+      --size:30;
+      --thickness:6;
+      --marker-size:4;
+      --score:0;
+      --text: "Excellent";
+      --marker-bg: var(--aura-blue);
+      margin:auto;
+      counter-increment: score var(--score);
+      grid-area:main;
+      position:relative;
+      padding-bottom:calc(var(--size) / 30 * 1vw);
+    }
+
+    .credit_score_mask {
+      width:calc(var(--size) * 1vw);
+      height:calc(var(--size) * 0.5vw);
+      background-color: white;
+    }
+
+    .credit_score:before {
+      content: var(--text);
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      font-size: 30pt;
+      z-index: 1;
+      top: 85%;
+      font-weight: bold;
+    }
+
+    .credit_score:after {
+      content: "300 850";
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      font-size: 16pt;
+      opacity:0.5;
+      z-index: 1;
+      top: 100%;
+      text-align-last: justify;
+    }
+
+    .credit_score_marker {
+      height: 200%;
+      width: 100%;
+      position: relative;
+      top: -200%;
+      left: 0;
+      transform: rotate(-90deg) rotate(calc((var(--score) - 300) / 550 * 180deg));
+      transition:transform 0.5s ease-out;
+    }
+
+    .credit_score_marker:after {
+      display: block;
+      content:'';
+      position:absolute;
+      left: calc((50 - var(--marker-size) / 4) * 1%);
+      top: calc((var(--thickness) / 4 - var(--marker-size) / 4) * 1%);
+      width: calc(var(--marker-size) / 2 * 1%);
+      height: calc(var(--marker-size) / 2 * 1%);
+      background: white;
+      border-radius: 50%;
+    }
+
+    .credit_score_marker:before {
+      display: block;
+      content:'';
+      position:absolute;
+      left: calc((50 - var(--marker-size) / 4 - var(--thickness) / 2) * 1%);
+      top: calc((var(--thickness) / 4 - var(--marker-size) / 4 - var(--thickness) / 2) * 1%);
+      width: calc(var(--marker-size) / 2 * 1%);
+      height: calc(var(--marker-size) / 2 * 1%);
+      background: var(--marker-bg);
+      padding: calc(var(--thickness) / 2 * 1%);
+      border-radius: 50%;
+    }
+
+    .credit_score_bg {
+      border-radius: 50%;
+      width:100%;
+      height:200%;
+      position:relative;
+      overflow:hidden;
+      grid-area: "main";
+    }
+
+    .credit_score_bg:after {
+      content: '';
+      width: calc((100 - var(--thickness)) * 1%);
+      height:calc((100 - var(--thickness)) * 1%);
+      background-color: white;
+      position:absolute;
+      left:calc((var(--thickness)) * 0.5%);
+      top: calc((var(--thickness)) * 0.5%);
+      border-radius:50%;
+    }
+
+    .credit_score_segment {
+      height:100%; width:100%;
+      position:absolute;
+      left:0; right:0;
+      transform: translate(0,-50%) rotate(calc(var(--offset,0) * 1deg));
+      transform-origin:50% 100%;
+      overflow:hidden;
+    }
+
+    .credit_score_segment:before {
+      background:var(--bg, #000);
+      content: '';
+      height:100%; width: 100%;
+      position:absolute;
+      transform:translate(0,100%) rotate(calc(var(--value, 45) * 1deg));
+      transform-origin:50% 0;
+    }
+
+    #credit_score_grid {
+      height: 90vh; width: 75vw;
+      margin: auto 12.5vw 10vh auto;
+      position:relative;
+      display:grid;
+      grid-template-columns: 32.3% 32.3% 32.3%;
+      grid-template-rows: 5vw auto 5vw 100pt auto;
+      grid-template-areas:
+        "title title title"
+        "main  main  main"
+        "subtitle subtitle subtitle"
+        "factor1 factor2 factor3"
+        "text text text"
+        ". button .";
+      grid-gap:1vw;
+      /*font-size:24pt;*/
+    }
+
+    .credit_score_title , .credit_score_subtitle{
+      margin:3vw auto;
+      width:100%;
+      grid-area:title;
+      text-align:center;
+      opacity:0.5;
+      font-size:20pt;
+    }
+
+    .credit_score_subtitle {
+      grid-area:subtitle;
+      /*text-align:left;*/
+    }
+
+    .factor {
+      overflow: none;
+      border-radius: 1vw;
+      position:relative;
+      background: #fafafa; 
+      border: 1px solid #ddd;
+      --bg:var(--aura-green);
+    }
+
+    .factor:before{
+      background:var(--bg);
+      content: "";
+      position: relative;
+      display: inline-block;
+      height: 100%;
+      width: 2.5%;
+      left: 0%;
+      border-radius: 1vw 0 0 1vw;
+    }
+
+    .factor div{
+      display: inline-block;
+      position: absolute;
+      top: 0;
+      left: 7.5%;
+    }
+
+    .factor p{
+      opacity:0.5;
+      /*font-size:16pt;*/
+    }
+
+    .credit_score_label:before {
+      position: absolute;
+      top: 0;
+      margin-top: 7vw;
+      height: 100%;
+      width: 100%;
+      text-align: center;
+      content: counter(score);
+      font-size: 80pt;
+      font-weight: bold;
+    }
+    
+    .credit_score_content {
+      grid-area:text;
+      font-size:20pt;
+      text-align:center;
+    }
+
+    .factor.overlay {
+        background: #fafafa;
+        width: 90vw;
+        height: 90vh;
+        position: absolute;
+        top: 5vh;
+        left: 5vw;
+        z-index: 1;
+        overflow:hidden;
+        transition:opacity 0.5s;
+        opacity:0;
+        display:none;
+    }
+
+    .factor.overlay div {
+      margin: 5%;   
+      font-size: 2em;
+      list-style: none;
+    }
+
+    .factor.overlay ul {
+      list-style: none;
+      width: 90%;
+      height: 500px;
+      overflow-y: scroll;
+      overflow-x: hidden;
+    }
+
+    .factor.overlay li {
+      background: white;
+      border-radius: 100px;
+      border: 1px solid #ddd;
+      padding: 0px 0px 20px 2%;
+      margin:13px 0px;
+      width: 97%;
+    }
+
+    .factor.overlay li p {
+      display: inline;
+    }
+
+    .factor.overlay ul:after{
+      background-image: linear-gradient(#fafafa00, #fafafaaa, #fafafaff, #fafafaff);
+      content:"";
+      height:20vh;
+      position:absolute;
+      bottom:0;
+      width:100%;
+    }
+
+    .factor button.exit {
+      position: absolute;
+      top: 2%;
+      right: 2%;
+      opacity: 0.2;
+    }
+
+    .factor button.exit p{
+      color:white;
+    }
+
+    .factor button.exit div{
+      background-color: var(--aura-grey);
+    }
+
+    .blurry-text {
+      color: transparent;
+      text-shadow: 0 0 18px var(--aura-grey);
+    }
