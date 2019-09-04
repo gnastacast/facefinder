@@ -23,6 +23,7 @@
       <tr>
         <td id='name_container'>
           <p id='name_text'>Hello Nico</p>
+          <!-- <button id="begin" onclick="begin()" type="button" class='pink'> -->
           <button id="begin" onclick="begin()" type="button" class='pink'>
               <div >
                 <p class="center">Allow Aura to use my likeness</p>
@@ -108,7 +109,7 @@
     </tr>
   </table>
   <div id="credit_score_container">
-    <div id=credit_score_grid>
+    <div class="credit_score_grid">
       <p class="credit_score_title">Your Social Credit Score</p>
       <div class="credit_score">
         <div class="credit_score_mask">
@@ -188,11 +189,17 @@
     </div>
     <div style="grid-row:1/3; height: 83%; width:80%;" >
       <img  class="webcam-img"src="{{ url_for('static', filename='images/user.jpg') }}" style="width:80%;"/>
-      <p><span class="true credit-score-dot green"></span>True social credit score</p>
-      <p><span class="fake credit-score-dot"></span>Perceived social credit score</p>
-      <button onclick="goto_0()" style="width: 300px; margin-top: 5%;" class='blue'>
+      <table>
+        <tr>
+          <td><span class="true credit-score-dot green"></span></td><td>True social credit score</td>
+        </tr>
+        <tr>
+          <td><span class="fake credit-score-dot"></span></td><td>Perceived social credit score</td>
+        </tr>
+      </table>
+      <button onclick="goto_5()" style="width: 200px; margin-top: 5%;" class='blue'>
           <div>
-            <p class="center">Finish and get results</p>
+            <p class="center">Get results</p>
           </div>
       </button>
     </div>
@@ -219,6 +226,116 @@
     <div class='result' style="align-self:baseline; display:none;">
       <img  id="result-img-F" src="{{ url_for('static', filename='images/000002.png') }}"/>
       <span class="credit-score-dot-img"></span>
+    </div>
+  </div>
+
+  <div id="final_results_container">
+    <div id="final_search_container">
+      <div style="grid-row:1/3; height: 83%; width:80%;" >
+        <img  class="final-webcam-img"src="{{ url_for('static', filename='images/user.jpg') }}" style="width:80%;"/>
+        <!-- <p><span class="true credit-score-dot green"></span>True social credit score</p> -->
+        <!-- <p><span class="fake credit-score-dot"></span>Perceived social credit score</p> -->
+        <button onclick="goto_0()" style="width: 300px; margin-top: 5%;" class='blue'>
+            <div>
+              <p class="center">Finish</p>
+            </div>
+        </button>
+      </div>
+      <div class='result' style="align-self:end;">
+        <img  id="final-result-img-A" src="{{ url_for('static', filename='images/000001.png') }}"/>
+        <span class="credit-score-dot-img"></span>
+      </div>
+      <div class='result' style="align-self:end;">
+        <img  id="final-result-img-B" src="{{ url_for('static', filename='images/000002.png') }}"/>
+        <span class="credit-score-dot-img"></span>
+      </div>
+      <div class='result' style="align-self:baseline;">
+        <img  id="final-result-img-C" src="{{ url_for('static', filename='images/000003.png') }}"/>
+        <span class="credit-score-dot-img"></span>
+      </div>
+      <div class='result' style="align-self:baseline;">
+        <img  id="final-result-img-D" src="{{ url_for('static', filename='images/000000.png') }}"/>
+        <span class="credit-score-dot-img"></span>
+      </div>
+      <div class='result' style="align-self:baseline; display:none;">
+        <img  id="final-result-img-E" src="{{ url_for('static', filename='images/000001.png') }}"/>
+        <span class="credit-score-dot-img"></span>
+      </div>
+      <div class='result' style="align-self:baseline; display:none;">
+        <img  id="final-result-img-F" src="{{ url_for('static', filename='images/000002.png') }}"/>
+        <span class="credit-score-dot-img"></span>
+      </div>
+    </div>
+
+    <div id="final_credit_score_container">
+      <div class="credit_score_grid">
+        <p class="credit_score_title">Your Social Credit Score</p>
+        <div class="credit_score">
+          <div class="credit_score_mask">
+            <div class="credit_score_bg">
+              <div class="credit_score_segment" style="--bg:var(--aura-red); --value:68"></div>
+              <div class="credit_score_segment" style="--bg:var(--aura-yellow); --value:68; --offset:70"></div>
+              <div class="credit_score_segment" style="--bg:var(--aura-green); --value:40; --offset:140"></div>
+            </div>
+            <div class="credit_score_marker"></div>
+            <div class="credit_score_label"></div>
+          </div>
+        </div>
+        <p class="credit_score_subtitle">Contributing Factors. Press a factor for more information</p>
+          <div class="factor" style="--bg:var(--aura-green);"  onclick="show_factor_overlay(0)"><div><p>Purchases and payments</p><h1 id="payment_total">$320</h1></div></div>
+          <div class="factor" style="--bg:var(--aura-yellow);" onclick="show_factor_overlay(1)"><div><p>Travel</p><h1 id="travel_total">4</h1></div></div>
+          <div class="factor" style="--bg:var(--aura-green);"  onclick="show_factor_overlay(2)"><div><p>Verified social networks</p><h1 id="social_total">3</h1></div></div>
+        <div class="credit_score_content">
+          <p  class="credit_score_description">Based on this score you are able to travel freely, attend private schools, and apply for loans</p>
+        </div>
+        <div style="grid-area: button;"><button class="blue center" style="width:150px;" onclick="goto_4()"><div ><p class="center">Continue</p></div></button></div>
+      </div>
+
+      <div class="factor overlay">
+        <div>
+          <h1>Purchases and Payments</h1>
+          <p>Payments to businesses or individuals with poor social credit scores may result in lowering your score. Always encourage businesses and friends to be honest about their credit scores. Report false credit scores at <u>https://www.dhs.gov/how-do-i/report-suspicious-activity</u></p>
+          <ul id="payment_list">
+              <li><span class="credit-score-dot green"></span>You paid Jonas Wisser $18.00 using Venmo on July 7 2019</li>
+              <li><span class="credit-score-dot green"></span>You paid Anna Nelson $26.00 using Venmo on June 15 2019</li>
+              <li><span class="credit-score-dot yellow"></span>Receipt for $5.00 at Commonplace Coffee Co on Sep 19 2017</li>
+              <li><span class="credit-score-dot red"></span>You paid Micaela Corn $50.00 using Venmo on Sep 19 2017</li>
+              <li><span class="credit-score-dot yellow"></span>Receipt for $24.91 at Five Points Artisan Bakeshop on Sep 16 2017</li>
+              <li><span class="credit-score-dot green"></span>Receipt for $6.42 at Joes dog house on Sep 15 2017</li>
+              <li><span class="credit-score-dot yellow"></span>Receipt for $4.05 at Artisan Cafe on Aug 25 2017</li>
+              <li><span class="credit-score-dot red"></span>Receipt for $9.84 at New Mexican Cuisine on Aug 15 2017</li>
+              <li><span class="credit-score-dot green"></span>Receipt for $12.55 at Tazikis Mediterranean Cafe on Aug 9 2017</li>
+          </ul>
+        </div>
+        <button class="exit" style="width:60px;" onclick="close_factor_overlay(0)"><div ><p class="center">X</p></div></button>
+      </div>
+
+      <div class="factor overlay">
+        <div>
+          <h1>Travel</h1>
+          <p>Travelling excessively can affect your social credit in multiple ways. Trustworthy citizens are hard workers and do not travel frivolously. If your job requires excessive travel, your business must be registered with the Department of Homeland Security. In addition, the more places you go the more likely it is that facial recognition mistakes you for someone else.</p>
+          <ul id="travel_list">
+              <li><span class="credit-score-dot yellow"></span>Mexico City, MX on July 7 2019</li>
+              <li><span class="credit-score-dot yellow"></span>Atlanta, GA on on Sep 19 2017</li>
+              <li><span class="credit-score-dot yellow"></span>Quito, EC on Aug 25 2017</li>
+              <li><span class="credit-score-dot yellow"></span>Lima, PE on Aug 9 2017</li>
+          </ul>
+        </div>
+        <button class="exit" style="width:60px;" onclick="close_factor_overlay(1)"><div ><p class="center">X</p></div></button>
+      </div>
+
+      <div class="factor overlay">
+        <div>
+          <h1>Verified social networks</h1>
+          <p>If you are a part of a social network, it is highly reccomended to change your preferences to allow government oversight. Much like a normal credit score and credit cards, the more consistent and responsible your usage is, the better your social credit score becomes.</p>
+          <ul id="social_network_list">
+              <li><span class="credit-score-dot green"></span>Facebook</li>
+              <li><span class="credit-score-dot green"></span>Instagram</li>
+              <li><span class="credit-score-dot green"></span>LinkedIn</li>
+          </ul>
+        </div>
+        <button class="exit" style="width:60px;" onclick="close_factor_overlay(2)"><div ><p class="center">X</p></div></button>
+      </div>
     </div>
   </div>
 

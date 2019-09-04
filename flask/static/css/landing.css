@@ -81,7 +81,7 @@
     #globe{
       display: inline-block;
       width:700px;
-      height: 100vh;
+      height: 98vh;
     }
   
   /* Search results */
@@ -111,7 +111,7 @@
       height: 100vh;
       width: 100vw;
       top: 0;
-      left: 1vw;
+      left: 0;
       color: white;
       background-color: var(--aura-grey);
       font-size: 26pt;
@@ -150,6 +150,10 @@
       border-radius: 50px;
     }
 
+    .result {
+      position:relative;
+    }
+
     #user-video{
       overflow: hidden;
       width: 0px;
@@ -167,18 +171,20 @@
       content: "";
       height: 50px;
       width: 50px;
+      transform: translate(-7.5px, 12.5px);
       border-radius: 1000px;
       display: inline-block;
-      margin-right: 20px;
-      transform: translate(0px,15px);
       animation-name: example;
       animation-duration: 4s;
     }
 
-    .credit-score-dot-img{
-        transform: translate(00px, -80px);
-        margin: -0px 0px -30px 30px;
-        position: absolute;
+    .credit-score-dot-img {
+      transform: translate(-3vw,-3vw);
+      width: 3vw;
+      height: 3vw;
+      position: absolute;
+      bottom: 0;
+      right: 0;
     }
 
   /* Credit score */
@@ -207,7 +213,7 @@
       position: absolute;
       width: 100%;
       text-align: center;
-      font-size: 30pt;
+      font-size: 2.5vw;
       z-index: 1;
       top: 85%;
       font-weight: bold;
@@ -298,9 +304,10 @@
       transform-origin:50% 0;
     }
 
-    #credit_score_grid {
-      height: 90vh; width: 75vw;
-      margin: auto 12.5vw 10vh auto;
+    .credit_score_grid {
+      height: 90vh;
+      width: 75%;
+      margin: auto 12.5% 10vh auto;
       position:relative;
       display:grid;
       grid-template-columns: 32.3% 32.3% 32.3%;
@@ -370,7 +377,7 @@
       width: 100%;
       text-align: center;
       content: counter(score);
-      font-size: 80pt;
+      font-size: 5vw;
       font-weight: bold;
     }
     
@@ -448,4 +455,34 @@
     .blurry-text {
       color: transparent;
       text-shadow: 0 0 18px var(--aura-grey);
+    }
+
+    #final_search_container{
+      background-color: white;
+      color:var(--aura-grey);
+      padding:0;
+      width:100vw;
+      height:100vh;
+      font-size: 20pt;
+      display: inline-grid;
+      grid-template-columns: 48vw 23vw 23vw;
+      grid-template-rows: 50vh 50vh;
+      width: 60vw;
+      height: 100vh;
+      grid-gap: 2vw;
+      justify-items: center;
+      align-items: center;
+      margin-left: -1vw;
+    }
+
+    #final_search_container img{
+      display:inline-block;
+      width:100%;
+      border-radius: 50px;
+    }
+
+    #final_search_container img{
+      display:inline-block;
+      width:100%;
+      border-radius: 50px;
     }

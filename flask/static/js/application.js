@@ -122,15 +122,16 @@
     credit_scores = document.getElementsByClassName('credit_score');
     credit_scores[idx].style.setProperty('--score', score);
     var score_ratio = (score - 300) / 550;
+    var description = "";
     if(score_ratio >= 140.0 / 180.0) {
       credit_scores[idx].style.setProperty('--text', '"Excellent"')
-      document.getElementsByClassName('credit_score_description')[0].textContent="Based on this score you are able to travel freely, you and your children may attend private schools, and you are able to apply for loans.";
+      document.getElementsByClassName('credit_score_description')[idx].textContent="Based on this score you are able to travel freely, you and your children may attend private schools, and you are able to apply for loans.";
     } else if(score_ratio >= 70.0 / 180.0) {
       credit_scores[idx].style.setProperty('--text', '"Average"');
-      document.getElementsByClassName('credit_score_description')[0].textContent="Based on this score your travel may be restricted to authorized trips, you and your family can attend certain private schools, and you are able to apply for small loans.";
+      document.getElementsByClassName('credit_score_description')[idx].textContent="Based on this score your travel may be restricted to authorized trips, you and your family can attend certain private schools, and you are able to apply for small loans.";
     } else {
       credit_scores[idx].style.setProperty('--text', '"Poor"');
-      document.getElementsByClassName('credit_score_description')[0].textContent="Based on this score travel is restricted to authorized trips within the country, you and your family may only attend schools with dedicated re-socialization programs, and cannot be loaned money.";
+      document.getElementsByClassName('credit_score_description')[idx].textContent="Based on this score travel is restricted to authorized trips within the country, you and your family may only attend schools with dedicated re-socialization programs, and cannot be loaned money.";
     }
   }
 
@@ -183,6 +184,7 @@
   function goto_3() {
     var credit_score = Math.round((credit_score_payment + credit_score_travel + credit_score_social) / 3.0 * 550) + 300;
     window.setTimeout(set_credit_score, 750, credit_score, 0);
+    set_credit_score(credit_score, 1);
     document.getElementById('landing_container').style.marginTop="-200vh";
     hide_logo();
     reset_1();
@@ -198,6 +200,17 @@
     hide_logo();
     reset_1();
     reset_2();
+    reset_3();
+  }
+
+
+  function goto_5() {
+    document.getElementById('landing_container').style.marginTop="-400vh";
+    stop_search();
+    hide_logo();
+    reset_1();
+    reset_2();
+    reset_3();
   }
 
   function hide_explanation() {
@@ -371,6 +384,8 @@
     stop_search = function stop_search() { socket.emit('stop_search', ''); };
     search = function search() { socket.emit('search', ''); };
 
+    var best_score = 0;
+
     socket.on('searchResult', function(msg) {
         document.getElementById('result-img-A').src = msg.A;
         document.getElementById('result-img-B').src = msg.B;
@@ -386,20 +401,37 @@
         document.getElementById('result-img-D').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Dcred));
 
         var average_score = (parseFloat(msg.Acred) + parseFloat(msg.Bcred) * 0.5 + parseFloat(msg.Ccred) * 0.25 + parseFloat(msg.Dcred) * 0.125 ) / 1.875;
+        var user_score = Math.round((credit_score_payment + credit_score_travel + credit_score_social) / 3.0 * 550) + 300;
 
         document.getElementsByClassName('fake credit-score-dot')[0].style.background = red_to_green(average_score);
-
-        var user_score = 755;
-
         document.getElementsByClassName('true credit-score-dot')[0].style.background = red_to_green((user_score - 300) / 500);
-        console.log(user_score, average_score)
         var difference = Math.round((average_score * 500 + 300) - user_score);
         if (difference >= 0) difference = "+"
+        document.getElementsByClassName("fake credit-score-dot")[0].parentElement.parentElement.children[1].textContent = "Perceived credit score (" + difference + ")";
 
 
-        var text = document.getElementsByClassName("fake credit-score-dot")[0].parentElement.innerHTML;
-        text = text.slice(0, text.indexOf('</span>')+7);
-        document.getElementsByClassName("fake credit-score-dot")[0].parentElement.innerHTML = text + "Perceived credit score (" + difference + ")";
+
+        if(average_score > best_score) {
+          best_score = average_score;
+          document.getElementById('final-result-img-A').src = msg.A;
+          document.getElementById('final-result-img-B').src = msg.B;
+          document.getElementById('final-result-img-C').src = msg.C;
+          document.getElementById('final-result-img-D').src = msg.D;
+          document.getElementById('final-result-img-A').style.opacity = 1.0;
+          document.getElementById('final-result-img-B').style.opacity = 0.7;
+          document.getElementById('final-result-img-C').style.opacity = 0.4;
+          document.getElementById('final-result-img-D').style.opacity = 0.2;
+          document.getElementById('final-result-img-A').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Acred));
+          document.getElementById('final-result-img-B').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Bcred));
+          document.getElementById('final-result-img-C').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Ccred));
+          document.getElementById('final-result-img-D').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Dcred));
+
+          document.getElementsByClassName('fake credit-score-dot')[1].style.background = red_to_green(average_score);
+          document.getElementsByClassName('true credit-score-dot')[1].style.background = red_to_green((user_score - 300) / 500);
+          var difference = Math.round((average_score * 500 + 300) - user_score);
+          if (difference >= 0) difference = "+"
+          document.getElementsByClassName("fake credit-score-dot")[1].parentElement.parentElement.children[1].textContent = "Perceived credit score (" + difference + ")";
+        }
     });
 
     socket.on('user_data', function(msg) {
