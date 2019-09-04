@@ -210,11 +210,20 @@ def stop_search(msg):
     thread.search = False
 
 @socketio.on('get_user_data', namespace='/test')
-def login(msg):
+def get_user_data(msg):
     r = requests.get('https://staging.projectamelia.ai/pusherman/social_calculator?token=' + msg['token'])
     print(r.status_code)
-    assert(r.status_code == 200)
-    socketio.emit('user_data', { 'json': r.text },namespace='/test');
+    if r.status_code == 200:
+        socketio.emit('user_data', { 'json': r.text },namespace='/test');
+    else:
+        print("GOT ERROR CODE WHEN REQUESTING DATA", r.status_code)
+        socketio.emit('user_data', { 'json': '{"name": "", \
+                                               "email": "", \
+                                               "locations": [], \
+                                               "flights": [], \
+                                               "payments": [], \
+                                               "venmo_snippets": [], \
+                                               "squarecash_snippets": []}'},namespace='/test');
 
 
 @socketio.on('connect', namespace='/test')

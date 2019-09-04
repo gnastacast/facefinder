@@ -411,27 +411,27 @@
 
 
 
-        if(average_score > best_score) {
-          best_score = average_score;
-          document.getElementById('final-result-img-A').src = msg.A;
-          document.getElementById('final-result-img-B').src = msg.B;
-          document.getElementById('final-result-img-C').src = msg.C;
-          document.getElementById('final-result-img-D').src = msg.D;
-          document.getElementById('final-result-img-A').style.opacity = 1.0;
-          document.getElementById('final-result-img-B').style.opacity = 0.7;
-          document.getElementById('final-result-img-C').style.opacity = 0.4;
-          document.getElementById('final-result-img-D').style.opacity = 0.2;
-          document.getElementById('final-result-img-A').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Acred));
-          document.getElementById('final-result-img-B').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Bcred));
-          document.getElementById('final-result-img-C').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Ccred));
-          document.getElementById('final-result-img-D').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Dcred));
+        // if(average_score > best_score) {
+        //   best_score = average_score;
+        //   document.getElementById('final-result-img-A').src = msg.A;
+        //   document.getElementById('final-result-img-B').src = msg.B;
+        //   document.getElementById('final-result-img-C').src = msg.C;
+        //   document.getElementById('final-result-img-D').src = msg.D;
+        //   document.getElementById('final-result-img-A').style.opacity = 1.0;
+        //   document.getElementById('final-result-img-B').style.opacity = 0.7;
+        //   document.getElementById('final-result-img-C').style.opacity = 0.4;
+        //   document.getElementById('final-result-img-D').style.opacity = 0.2;
+        //   document.getElementById('final-result-img-A').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Acred));
+        //   document.getElementById('final-result-img-B').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Bcred));
+        //   document.getElementById('final-result-img-C').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Ccred));
+        //   document.getElementById('final-result-img-D').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Dcred));
 
-          document.getElementsByClassName('fake credit-score-dot')[1].style.background = red_to_green(average_score);
-          document.getElementsByClassName('true credit-score-dot')[1].style.background = red_to_green((user_score - 300) / 500);
-          var difference = Math.round((average_score * 500 + 300) - user_score);
-          if (difference >= 0) difference = "+"
-          document.getElementsByClassName("fake credit-score-dot")[1].parentElement.parentElement.children[1].textContent = "Perceived credit score (" + difference + ")";
-        }
+        //   document.getElementsByClassName('fake credit-score-dot')[1].style.background = red_to_green(average_score);
+        //   document.getElementsByClassName('true credit-score-dot')[1].style.background = red_to_green((user_score - 300) / 500);
+        //   var difference = Math.round((average_score * 500 + 300) - user_score);
+        //   if (difference >= 0) difference = "+"
+        //   document.getElementsByClassName("fake credit-score-dot")[1].parentElement.parentElement.children[1].textContent = "Perceived credit score (" + difference + ")";
+        // }
     });
 
     socket.on('user_data', function(msg) {
