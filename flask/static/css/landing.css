@@ -195,7 +195,7 @@
       --score:0;
       --text: "Excellent";
       --marker-bg: var(--aura-blue);
-      margin:auto;
+      margin:0 30%;
       counter-increment: score var(--score);
       grid-area:main;
       position:relative;
@@ -352,7 +352,7 @@
       position: relative;
       display: inline-block;
       height: 100%;
-      width: 2.5%;
+      width: 0.7vw;
       left: 0%;
       border-radius: 1vw 0 0 1vw;
     }
@@ -361,7 +361,7 @@
       display: inline-block;
       position: absolute;
       top: 0;
-      left: 7.5%;
+      left: 2vw;
     }
 
     .factor p{
@@ -485,4 +485,33 @@
       display:inline-block;
       width:100%;
       border-radius: 50px;
+    }
+
+    #final_search_container {
+      display:inline-grid;
+      width: 100%;
+      grid-template-columns: 20% 20% 20% 20%;
+      grid-template-rows: 10vh 15vh 15vh 5vh 5vh 20vh;
+    }
+
+    #final_credit_score_container{
+      display:inline-block;
+    }
+
+    #final_credit_score_container .credit_score_grid {
+      width: 80%;
+    }
+
+    #final_results_container {
+      display: grid;
+      grid-template-columns: 50vw 50vw;
+    }
+
+    #final_credit_score_container .credit_score {
+        margin: auto;
+    }
+
+    #final_search_container .title {
+      opacity: .5;
+      transform: translate(0px, 20px);
     }
