@@ -115,6 +115,9 @@
     set_credit_score(300,0);
   }
 
+
+
+  var best_score = 0;
   var credit_score_payment = 0.0;
   var credit_score_travel = 0.0;
   var credit_score_social = 0.0;
@@ -372,8 +375,7 @@
         var urlCreator = window.URL || window.webkitURL;
         var imageUrl = urlCreator.createObjectURL( blob );
         var imgs = document.getElementsByClassName('webcam-img');
-        var i
-        for(i=0; i < imgs.length; i++){
+        for(var i=0; i < imgs.length; i++){
           imgs[i].src = imageUrl;
         }
       }
@@ -383,8 +385,6 @@
     get_user_data = function get_user_data(token) { socket.emit('get_user_data', { token: token }); };
     stop_search = function stop_search() { socket.emit('stop_search', ''); };
     search = function search() { socket.emit('search', ''); };
-
-    var best_score = 0;
 
     socket.on('searchResult', function(msg) {
         document.getElementById('result-img-A').src = msg.A;
@@ -406,32 +406,40 @@
         document.getElementsByClassName('fake credit-score-dot')[0].style.background = red_to_green(average_score);
         document.getElementsByClassName('true credit-score-dot')[0].style.background = red_to_green((user_score - 300) / 500);
         var difference = Math.round((average_score * 500 + 300) - user_score);
-        if (difference >= 0) difference = "+"
+        if (difference >= 0) difference = "+" + difference;
         document.getElementsByClassName("fake credit-score-dot")[0].parentElement.parentElement.children[1].textContent = "Perceived credit score (" + difference + ")";
 
 
 
-        // if(average_score > best_score) {
-        //   best_score = average_score;
-        //   document.getElementById('final-result-img-A').src = msg.A;
-        //   document.getElementById('final-result-img-B').src = msg.B;
-        //   document.getElementById('final-result-img-C').src = msg.C;
-        //   document.getElementById('final-result-img-D').src = msg.D;
-        //   document.getElementById('final-result-img-A').style.opacity = 1.0;
-        //   document.getElementById('final-result-img-B').style.opacity = 0.7;
-        //   document.getElementById('final-result-img-C').style.opacity = 0.4;
-        //   document.getElementById('final-result-img-D').style.opacity = 0.2;
-        //   document.getElementById('final-result-img-A').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Acred));
-        //   document.getElementById('final-result-img-B').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Bcred));
-        //   document.getElementById('final-result-img-C').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Ccred));
-        //   document.getElementById('final-result-img-D').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Dcred));
+        if(average_score > best_score) {
+          best_score = average_score;
+          document.getElementById('final-result-img-A').src = msg.A;
+          document.getElementById('final-result-img-B').src = msg.B;
+          document.getElementById('final-result-img-C').src = msg.C;
+          document.getElementById('final-result-img-D').src = msg.D;
+          document.getElementById('final-result-img-A').style.opacity = 1.0;
+          document.getElementById('final-result-img-B').style.opacity = 0.7;
+          document.getElementById('final-result-img-C').style.opacity = 0.4;
+          document.getElementById('final-result-img-D').style.opacity = 0.2;
+          document.getElementById('final-result-img-A').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Acred));
+          document.getElementById('final-result-img-B').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Bcred));
+          document.getElementById('final-result-img-C').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Ccred));
+          document.getElementById('final-result-img-D').nextSibling.nextSibling.style.backgroundColor = red_to_green(parseFloat(msg.Dcred));
 
-        //   document.getElementsByClassName('fake credit-score-dot')[1].style.background = red_to_green(average_score);
-        //   document.getElementsByClassName('true credit-score-dot')[1].style.background = red_to_green((user_score - 300) / 500);
-        //   var difference = Math.round((average_score * 500 + 300) - user_score);
-        //   if (difference >= 0) difference = "+"
-        //   document.getElementsByClassName("fake credit-score-dot")[1].parentElement.parentElement.children[1].textContent = "Perceived credit score (" + difference + ")";
-        // }
+          document.getElementsByClassName('fake credit-score-dot')[1].style.background = red_to_green(average_score);
+          document.getElementsByClassName('true credit-score-dot')[1].style.background = red_to_green((user_score - 300) / 500);
+          difference = Math.round((average_score * 500 + 300) - user_score);
+          if (difference >= 0) difference = "+" + difference;
+          document.getElementsByClassName("fake credit-score-dot")[1].parentElement.parentElement.children[1].textContent = "Perceived credit score (" + difference + ")";
+          var arrayBufferView = new Uint8Array( msg.image );
+          var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
+          var urlCreator = window.URL || window.webkitURL;
+          var imageUrl = urlCreator.createObjectURL( blob );
+          var imgs = document.getElementsByClassName('final-webcam-img');
+          for(var i=0; i < imgs.length; i++){
+            imgs[i].src = imageUrl;
+          }
+        }
     });
 
     socket.on('user_data', function(msg) {
@@ -460,6 +468,7 @@
       const nameText = document.getElementById('name_text');
       console.log(tapData);
       nameText.textContent = "Hello " + tapData.meta.first_name;
+      best_score = 0;
       fakePayments(tapData.username);
       fakeFlights(tapData.username);
       fakeSocial(tapData.username);
@@ -486,7 +495,7 @@
       // hosted on the server, we can just use window.location.hostname to
       // automatically pick the right one
       // const hostname = window.location.hostname;
-      const hostname = 'staging.projectamelia.ai';
+      const hostname = 'projectamelia.ai';
       const ws = new WebSocket(`wss://${hostname}/pusherman/companions/login/websocket?app=${appName}`);
 
       let users = {};

@@ -142,7 +142,8 @@ class VideoThread(Thread):
 
             # frame = cv2.resize(frame,(800,448))
             frame = crop_square(frame, 500)
-
+            ret, buf = cv2.imencode('.jpg', frame)
+            socketio.emit('image', { 'image': True, 'buffer': buf.tobytes() },namespace='/test');
             if face_recognition is not None:
                 faces = face_recognition.identify(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
                 if faces is None:
@@ -174,9 +175,9 @@ class VideoThread(Thread):
                                                     'Ccred': str(social_credit[int(best_matches[0,2])]),
                                                     'Dcred': str(social_credit[int(best_matches[0,3])]),
                                                     'Ecred': str(social_credit[int(best_matches[0,4])]),
-                                                    'Fcred': str(social_credit[int(best_matches[0,5])]) },namespace='/test');
-            ret, buf = cv2.imencode('.jpg', frame)
-            socketio.emit('image', { 'image': True, 'buffer': buf.tobytes() },namespace='/test');
+                                                    'Fcred': str(social_credit[int(best_matches[0,5])]),
+                                                    'image': buf.tobytes()},namespace='/test');
+
             # if frame_count > 10:
             #     break
     def run(self):
@@ -211,7 +212,7 @@ def stop_search(msg):
 
 @socketio.on('get_user_data', namespace='/test')
 def get_user_data(msg):
-    r = requests.get('https://staging.projectamelia.ai/pusherman/social_calculator?token=' + msg['token'])
+    r = requests.get('https://projectamelia.ai/pusherman/social_calculator?token=' + msg['token'])
     print(r.status_code)
     if r.status_code == 200:
         socketio.emit('user_data', { 'json': r.text },namespace='/test');

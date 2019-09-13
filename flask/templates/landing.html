@@ -68,11 +68,14 @@
           </path>
         </g>
       </svg>
-      <button onclick="goto_1()" style="width: 300px; position: absolute; margin-top: 15%;" class='blue center'>
+      <!--<button onclick="goto_1()" style="width: 300px; position: absolute; margin-top: 15%;" class='blue center'>
           <div>
             <p class="center">Touch wristband to start</p>
           </div>
-      </button>
+      </button> -->
+      <div style="width: 300px; position: absolute; margin-top: 15%; font-size:1.5em;" class='center'>
+        <p class="center">Touch wristband to start</p>
+      </div>
     </div>
   </div>
   <table id='globe_container'>
@@ -283,9 +286,16 @@
         <img  id="final-result-img-F" src="{{ url_for('static', filename='images/000002.png') }}"/>
         <span class="credit-score-dot-img"></span>
       </div>
-      <p style="grid-column: 1/5; grid-row: 4; width:100%; margin-left: 2vw;"><span class="true credit-score-dot green"></span>True social credit score</p>
-      <p style="grid-column: 1/5; grid-row: 5; width:100%; margin-left: 2vw;"><span class="fake credit-score-dot" ></span>Perceived social credit score</p>
-      <div style="grid-column: 3/5; grid-row:6;"><button class="blue center" style="width:150px;" onclick="goto_4()"><div ><p class="center">Finish</p></div></button></div>
+
+      <table style="grid-column: 1/5; grid-row: 4; width:100%; margin-left: 2vw;">
+        <tr>
+          <td><span class="true credit-score-dot green"></span></td><td>True social credit score</td>
+        </tr>
+        <tr>
+          <td><span class="fake credit-score-dot"></span></td><td>Perceived social credit score</td>
+        </tr>
+      </table>
+      <div style="grid-column: 3/5; grid-row:5;"><button class="blue center" style="width:150px;" onclick="goto_0()"><div ><p class="center">Finish</p></div></button></div>
     </div>
   </div>
 
