@@ -127,6 +127,7 @@ class VideoThread(Thread):
         # face_recognition = None
         start_time = time.time()
         while not threadStopEvent.isSet():
+            # return
             frame_count += 1
             # if frame_count == video_capture.get(cv2.CAP_PROP_FRAME_COUNT):
             #     frame_count = 30 #Or whatever as long as it is the same as next line
@@ -142,8 +143,6 @@ class VideoThread(Thread):
 
             # frame = cv2.resize(frame,(800,448))
             frame = crop_square(frame, 500)
-            ret, buf = cv2.imencode('.jpg', frame)
-            socketio.emit('image', { 'image': True, 'buffer': buf.tobytes() },namespace='/test');
             if face_recognition is not None:
                 faces = face_recognition.identify(cv2.cvtColor(frame, cv2.COLOR_BGR2RGB))
                 if faces is None:
@@ -178,10 +177,23 @@ class VideoThread(Thread):
                                                     'Fcred': str(social_credit[int(best_matches[0,5])]),
                                                     'image': buf.tobytes()},namespace='/test');
 
+            ret, buf = cv2.imencode('.jpg', frame)
+            socketio.emit('image', { 'image': True, 'buffer': buf.tobytes() },namespace='/test');
+            # yield (b'--frame\r\n'
+            #    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n')
             # if frame_count > 10:
             #     break
+
     def run(self):
         self.getVideoStream()
+
+# No cacheing at all for API endpoints.
+@app.after_request
+def add_header(response):
+    # response.cache_control.no_store = True
+    if 'Cache-Control' not in response.headers:
+        response.headers['Cache-Control'] = 'no-store'
+    return response
 
 @app.route('/companion')
 def companion():
@@ -206,6 +218,14 @@ def globe():
 def search(msg):
     thread.search = True
 
+@socketio.on('set_credit_score', namespace='/test')
+def set_credit_score(msg):
+    payload = {'app_name': 'social_calculator',
+               'short_description': 'Social Credit',
+               'long_description': "Your social credit is {} as calculated by our facial recognition system".format(msg['score'])}
+    r = requests.post('https://projectamelia.ai/pusherman/companions/inference?token=' + msg['token'], data=payload)
+    print(r.status_code)
+
 @socketio.on('stop_search', namespace='/test')
 def stop_search(msg):
     thread.search = False
@@ -215,7 +235,8 @@ def get_user_data(msg):
     r = requests.get('https://projectamelia.ai/pusherman/social_calculator?token=' + msg['token'])
     print(r.status_code)
     if r.status_code == 200:
-        socketio.emit('user_data', { 'json': r.text },namespace='/test');
+        socketio.emit('user_data', { 'json': r.text,
+                                     'token': msg['token'] },namespace='/test');
     else:
         print("GOT ERROR CODE WHEN REQUESTING DATA", r.status_code)
         socketio.emit('user_data', { 'json': '{"name": "", \
@@ -224,7 +245,9 @@ def get_user_data(msg):
                                                "flights": [], \
                                                "payments": [], \
                                                "venmo_snippets": [], \
-                                               "squarecash_snippets": []}'},namespace='/test');
+                                               "squarecash_snippets": [], \
+                                               "providers": []}',
+                                      'token': msg['token']},namespace='/test');
 
 
 @socketio.on('connect', namespace='/test')

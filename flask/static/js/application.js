@@ -2,6 +2,7 @@
   function search() {}
   function stop_search() {}
   function get_user_data(token) {}
+  function send_credit_score(score) {}
 
 // Utility functions
   // Hashing function
@@ -112,7 +113,7 @@
   }
 
   function reset_3() {
-    set_credit_score(300,0);
+    // set_credit_score(300,0);
   }
 
 
@@ -136,12 +137,13 @@
       credit_scores[idx].style.setProperty('--text', '"Poor"');
       document.getElementsByClassName('credit_score_description')[idx].textContent="Based on this score travel is restricted to authorized trips within the country, you and your family may only attend schools with dedicated re-socialization programs, and cannot be loaned money.";
     }
+
   }
 
   function goto_0() {
     var transition = document.getElementById('landing_container').style.transition;
     document.getElementById('landing_container').style.transition = "none";
-    document.getElementById('landing_container').style.marginTop="-0vh";
+    document.getElementById('landing_container').style.marginTop="0vh";
     document.getElementById('landing_container').style.transition = transition;
     document.getElementById('logo').style.opacity = "1";
     document.getElementById('logo').style.display = "block";
@@ -159,7 +161,7 @@
   }
 
   function goto_1() {
-    document.getElementById('landing_container').style.marginTop="-0vh";
+    document.getElementById('landing_container').style.marginTop="0vh";
     hide_logo();
     reset_3();
     reset_2();
@@ -193,8 +195,10 @@
     reset_1();
     reset_3();
     stop_search();
-    document.getElementById('explanation_overlay').style.opacity = 1;
-    document.getElementById('explanation_overlay').style.display = "block";
+    document.getElementsByClassName('explanation_overlay')[0].style.opacity = 1;
+    document.getElementsByClassName('explanation_overlay')[0].style.display = "block";
+    document.getElementsByClassName('explanation_overlay')[1].style.opacity = 1;
+    document.getElementsByClassName('explanation_overlay')[1].style.display = "block";
   }
 
   function goto_4() {
@@ -216,10 +220,10 @@
     reset_3();
   }
 
-  function hide_explanation() {
-    document.getElementById('explanation_overlay').style.opacity = 0;
+  function hide_explanation(id) {
+    document.getElementsByClassName('explanation_overlay')[id].style.opacity = 0;
     window.setTimeout(function() {
-      document.getElementById('explanation_overlay').style.display = "none";
+      document.getElementsByClassName('explanation_overlay')[id].style.display = "none";
     }, 1000);
   }
 
@@ -279,8 +283,11 @@
       elem.appendChild(paymentItem);
     }
     var scoreColor = ['red','yellow','green'][Math.round(averageScore / payments.length  * 2.999 - 0.5)];
-    document.getElementById('payment_total').textContent = "$" + Math.round(totalAmount);
-    document.getElementById('payment_total').parentElement.parentElement.style.setProperty('--bg', 'var(--aura-' + scoreColor + ')');
+    document.getElementsByClassName('payment_total')[0].textContent = "$" + Math.round(totalAmount);
+    document.getElementsByClassName('payment_total')[0].parentElement.parentElement.style.setProperty('--bg', 'var(--aura-' + scoreColor + ')');
+    document.getElementsByClassName('payment_total')[1].textContent = "$" + Math.round(totalAmount);
+    document.getElementsByClassName('payment_total')[1].parentElement.parentElement.style.setProperty('--bg', 'var(--aura-' + scoreColor + ')');
+    credit_score_payment = averageScore / payments.length;
     return averageScore / payments.length;
   }
 
@@ -329,8 +336,10 @@
     var averageScore = retval[0] / retval[1];
     console.log(retval);
     var scoreColor = ['red','yellow','green'][Math.floor(averageScore * 3)];
-    document.getElementById('payment_total').parentElement.parentElement.style.setProperty('--bg', 'var(--aura-' + scoreColor + ')');
-    document.getElementById('payment_total').textContent = ['Poor','Average', 'Excellent'][Math.floor(averageScore * 3)];
+    document.getElementsByClassName('payment_total')[0].parentElement.parentElement.style.setProperty('--bg', 'var(--aura-' + scoreColor + ')');
+    document.getElementsByClassName('payment_total')[0].textContent = ['Poor','Average', 'Excellent'][Math.floor(averageScore * 3)];
+    document.getElementsByClassName('payment_total')[1].parentElement.parentElement.style.setProperty('--bg', 'var(--aura-' + scoreColor + ')');
+    document.getElementsByClassName('payment_total')[1].textContent = ['Poor','Average', 'Excellent'][Math.floor(averageScore * 3)];
     credit_score_payment = averageScore;
     console.log("Faking credit_score_payment");
     return averageScore
@@ -341,17 +350,21 @@
     var retval = fake_data(name, 'travel', text_options, 0.2, 4);
     var averageScore = retval[0] / retval[1];
     var scoreColor = ['red','yellow','green'][Math.floor(averageScore * 3)];
-    document.getElementById('travel_total').parentElement.parentElement.style.setProperty('--bg', 'var(--aura-' + scoreColor + ')');
-    document.getElementById('travel_total').textContent = ['Poor','Average', 'Excellent'][Math.floor(averageScore * 3)];
+    document.getElementsByClassName('travel_total')[0].parentElement.parentElement.style.setProperty('--bg', 'var(--aura-' + scoreColor + ')');
+    document.getElementsByClassName('travel_total')[0].textContent = ['Poor','Average', 'Excellent'][Math.floor(averageScore * 3)];
+    document.getElementsByClassName('travel_total')[1].parentElement.parentElement.style.setProperty('--bg', 'var(--aura-' + scoreColor + ')');
+    document.getElementsByClassName('travel_total')[1].textContent = ['Poor','Average', 'Excellent'][Math.floor(averageScore * 3)];
     credit_score_travel = averageScore;
     console.log("Faking credit_score_travel");
     return averageScore
   }
 
   function fakeSocial(name) {
-    credit_score_social = 1.0;
-    document.getElementById('social_total').parentElement.parentElement.style.setProperty('--bg', 'var(--aura-green)');
-    document.getElementById('social_total').textContent = 'Excellent';
+    credit_score_social = 0.5;
+    document.getElementsByClassName('social_total')[0].parentElement.parentElement.style.setProperty('--bg', 'var(--aura-red)');
+    document.getElementsByClassName('social_total')[0].textContent = 'Poor';
+    document.getElementsByClassName('social_total')[1].parentElement.parentElement.style.setProperty('--bg', 'var(--aura-red)');
+    document.getElementsByClassName('social_total')[1].textContent = 'Poor';
     console.log("Faking credit_score_social");
   }
 
@@ -360,9 +373,37 @@
   }
 
   function fillSocialNetworks(networks){
-
+    clearDiv('social_network_list')
+    var total_score = 0;
+    networks.unshift('aura')
+    var n_elements = networks.length;
+    var elem = document.getElementById('social_network_list');
+    for(var i=0; i<n_elements; i++)
+    {
+      var listElem = document.createElement('li');
+      var scoreDot = document.createElement('span');
+      scoreDot.classList.add('credit-score-dot');
+      total_score += 1;
+      scoreDot.classList.add('green');
+      listElem.appendChild(scoreDot);
+      var text = document.createElement('p');
+      var name = networks[i].charAt(0).toUpperCase() + networks[i].slice(1);
+      text.appendChild(document.createTextNode(name));
+      listElem.appendChild(text);
+      elem.appendChild(listElem);
+    }
+    if (total_score > 4) total_score = 4;
+    credit_score_social = total_score / 4.000000000001;
+    var scoreColor = ['red','yellow','green'][Math.floor(credit_score_social * 3)];
+    document.getElementsByClassName('social_total')[0].parentElement.parentElement.style.setProperty('--bg', 'var(--aura-' + scoreColor + ')');
+    document.getElementsByClassName('social_total')[0].textContent = ['Poor','Average', 'Excellent'][Math.floor(credit_score_social * 3)];
+    document.getElementsByClassName('social_total')[1].parentElement.parentElement.style.setProperty('--bg', 'var(--aura-' + scoreColor + ')');
+    document.getElementsByClassName('social_total')[1].textContent = ['Poor','Average', 'Excellent'][Math.floor(credit_score_social * 3)];
+    return [total_score, 4];
   }
-
+  var urlCreator = window.URL || window.webkitURL;
+  var imageUrl = "";
+  var bestImageUrl = "";
 // SOCKET STUFF
   $(document).ready(function(){
     //connect to the socket server.
@@ -372,8 +413,10 @@
         // Obtain a blob: URL for the image data.
         var arrayBufferView = new Uint8Array( info.buffer );
         var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
-        var urlCreator = window.URL || window.webkitURL;
-        var imageUrl = urlCreator.createObjectURL( blob );
+        if (imageUrl) {
+          window.URL.revokeObjectURL(imageUrl);
+        }
+        imageUrl = urlCreator.createObjectURL( blob );
         var imgs = document.getElementsByClassName('webcam-img');
         for(var i=0; i < imgs.length; i++){
           imgs[i].src = imageUrl;
@@ -382,6 +425,7 @@
     });
 
     // Fill placeholder functions
+    send_credit_score = function send_credit_score(token, score) { socket.emit('set_credit_score', { token: token, score: score }); }; 
     get_user_data = function get_user_data(token) { socket.emit('get_user_data', { token: token }); };
     stop_search = function stop_search() { socket.emit('stop_search', ''); };
     search = function search() { socket.emit('search', ''); };
@@ -433,25 +477,30 @@
           document.getElementsByClassName("fake credit-score-dot")[1].parentElement.parentElement.children[1].textContent = "Perceived credit score (" + difference + ")";
           var arrayBufferView = new Uint8Array( msg.image );
           var blob = new Blob( [ arrayBufferView ], { type: "image/jpeg" } );
-          var urlCreator = window.URL || window.webkitURL;
-          var imageUrl = urlCreator.createObjectURL( blob );
+          if (bestImageUrl) {
+            window.URL.revokeObjectURL(bestImageUrl);
+          }
+          bestImageUrl = urlCreator.createObjectURL( blob );
           var imgs = document.getElementsByClassName('final-webcam-img');
           for(var i=0; i < imgs.length; i++){
-            imgs[i].src = imageUrl;
+            imgs[i].src = bestImageUrl;
           }
         }
     });
 
     socket.on('user_data', function(msg) {
       data = JSON.parse(msg.json);
-      var travelScore, paymentScore, socialScore = 0;
-      if(data.payments.length != 0)
+      console.log(data)
+      if(!(data.payments === null) && data.payments.length != 0)
       {
         fillPaymentList(data.payments);
       }
-      console.log(data.flights);
-      console.log(data.venmo_snippets);
-      console.log(data.squarecash_snippets);
+      if(!(data.providers === null) && data.providers.length != 0)
+      {
+        fillSocialNetworks(data.providers)
+      }
+      console.log(msg);
+      send_credit_score(msg.token, Math.round((credit_score_payment + credit_score_travel + credit_score_social) / 3.0 * 550) + 300);
     });
 
   });
@@ -507,7 +556,9 @@
               detail: {tapData, users, appName},
               bubbles: true,
           };
-          if (!handleLogout) {
+          // To fix the fact that we don't log out when the finish button is pressed
+          var at_beginning = document.getElementById('landing_container').style.marginTop == "0vh" && document.getElementById('logo').style.display == "block";;
+          if (!handleLogout || at_beginning) {
               for (var u in users) {
                   delete users[u];
               }

@@ -106,7 +106,7 @@
 }
 
 /* Face Search */
-#explanation_overlay{
+.explanation_overlay{
   position: absolute;
   height: 100vh;
   width: 100vw;
@@ -116,11 +116,11 @@
   background-color: var(--aura-grey);
   font-size: 26pt;
   line-height: 36pt;
-  z-index: 1;
+  z-index: 100;
   transition:opacity 1s;
 }
 
-#explanation_overlay > p{
+.explanation_overlay > p{
   padding: 10%;
   text-align: left;
 }
@@ -165,6 +165,10 @@
 
 .webcam-img {
   border-radius: 50px;
+}
+
+#credit_score_container{
+  position: relative;
 }
 
 [class*='credit-score-dot']  {
@@ -491,7 +495,7 @@
   display:inline-grid;
   width: 100%;
   grid-template-columns: 20% 20% 20% 20%;
-  grid-template-rows: 10vh 15vh 15vh 20vh 20vh;
+  grid-template-rows: 10vh 15vh 15vh 30vh 10vh;
 }
 
 #final_credit_score_container{
